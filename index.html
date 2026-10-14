@@ -1,0 +1,516 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="description" content="Easington Sea Angling Club: Points Championship league table, match results and angler records.">
+<style>:root{color-scheme:light;padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bottom)}body{margin:0;font:14px system-ui,sans-serif}img{max-width:100%}[hidden]{display:none!important}</style>
+<title>Easington Sea Angling Club</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Fredoka:wght@600&family=Source+Sans+3:wght@400;600;700&display=swap">
+<style>
+/* Layout: embroidered-patch masthead on fabric navy, tab bar, one 1040px column of club business below */
+:root {
+  --fabric: #262f39;      /* the jumper the logo is stitched on */
+  --fabric-2: #313b47;
+  --thread: #e6c740;      /* yellow lettering thread */
+  --cod: #2f6bb0;         /* the cod, deepened for text on light */
+  --cod-soft: #dce8f6;
+  --bg: #eef1f4;
+  --surface: #ffffff;
+  --ink: #17202a;
+  --muted: #5b6774;
+  --line: #d6dde5;
+  --gold-ink: #7d6200;
+  --gold-fill: #f7e7a1;
+  --warn: #9a4b00;
+  --warn-fill: #fdebd6;
+  --good: #24704a;
+  --heat: 47 107 176;     /* rgb triplet of --cod for heat cells */
+  --font-display: "Barlow Condensed", "Arial Narrow", "Roboto Condensed", sans-serif;
+  --font-body: "Source Sans 3", "Segoe UI", system-ui, sans-serif;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #161c23; --surface: #1e262f; --ink: #e8edf2; --muted: #9aa7b4; --line: #2e3945;
+    --cod: #8db5e8; --cod-soft: #22344a; --gold-ink: #f0d35c; --gold-fill: #4a3f12;
+    --warn: #f3b06b; --warn-fill: #3d2a15; --good: #7fd1a3; --heat: 141 181 232; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #161c23; --surface: #1e262f; --ink: #e8edf2; --muted: #9aa7b4; --line: #2e3945;
+  --cod: #8db5e8; --cod-soft: #22344a; --gold-ink: #f0d35c; --gold-fill: #4a3f12;
+  --warn: #f3b06b; --warn-fill: #3d2a15; --good: #7fd1a3; --heat: 141 181 232; color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+body { background: var(--bg); color: var(--ink); font-family: var(--font-body); font-size: 16px; line-height: 1.5; }
+h1, h2, h3 { font-family: var(--font-display); text-wrap: balance; margin: 0; line-height: 1.1; }
+button, input, select { font: inherit; color: inherit; }
+:focus-visible { outline: 3px solid var(--thread); outline-offset: 2px; }
+.num { font-variant-numeric: tabular-nums; }
+
+/* Masthead */
+.mast { background: var(--fabric); color: #f2f4f7; padding-inline: 16px; position: relative; overflow: hidden; }
+.mast-in, .tabs { position: relative; z-index: 1; }
+.mast-in { max-width: 1040px; margin: 0 auto; display: flex; align-items: center; gap: 20px; padding-block: 14px 0; flex-wrap: wrap; }
+.badge { width: 230px; max-width: 46vw; height: auto; flex: none; overflow: visible; cursor: pointer; }
+.badge-text { font-family: "Fredoka", "Arial Rounded MT Bold", "Trebuchet MS", sans-serif; font-weight: 600; font-size: 27px; letter-spacing: .5px; fill: #e6c740; }
+
+/* The cod in the badge wriggles in the hand and blows bubbles */
+.grip-fish { transform-box: view-box; transform-origin: 232px 140px; animation: wriggle 1.7s ease-in-out infinite alternate; }
+.jaw { transform-box: fill-box; transform-origin: 100% 0%; animation: gulp 1.7s ease-in-out infinite alternate; }
+.bubble { fill: none; stroke: #a9c4e8; stroke-width: 1.6; opacity: 0; transform-box: fill-box; transform-origin: center; animation: rise 3.4s ease-in infinite; }
+.bubble.b2 { animation-delay: 1.1s; } .bubble.b3 { animation-delay: 2.2s; }
+.badge.splash .grip-fish { animation: thrash .14s linear 8 alternate; }
+@keyframes wriggle { from { transform: rotate(-3.5deg); } to { transform: rotate(3deg) translateX(-2px); } }
+@keyframes gulp { from { transform: rotate(0deg); } to { transform: rotate(-9deg); } }
+@keyframes thrash { from { transform: rotate(-8deg); } to { transform: rotate(8deg); } }
+@keyframes rise { 0% { opacity: 0; transform: translate(0, 0) scale(.5); } 15% { opacity: .9; } 100% { opacity: 0; transform: translate(-10px, -70px) scale(1.2); } }
+
+/* Cod swimming across the masthead */
+.sea { position: absolute; inset: 0; pointer-events: none; z-index: 0; }
+.swimmer { position: absolute; left: 0; width: 150px; animation: swim 26s linear infinite; }
+.swimmer.far { width: 80px; top: 2px; opacity: .32; animation-duration: 38s; animation-delay: -21s; }
+.swimmer.near { bottom: 56px; opacity: .55; }
+.swimmer .bob { animation: bob 3.2s ease-in-out infinite alternate; }
+.swimmer svg { width: 100%; height: auto; display: block; overflow: visible; }
+.swimmer .tail { transform-box: fill-box; transform-origin: 0% 50%; animation: tailwag .42s ease-in-out infinite alternate; }
+.swimmer.far .tail { animation-duration: .6s; }
+@keyframes swim { from { transform: translateX(calc(100vw + 20px)); } to { transform: translateX(-180px); } }
+@keyframes bob { from { transform: translateY(-6px) rotate(1.5deg); } to { transform: translateY(6px) rotate(-1.5deg); } }
+@keyframes tailwag { from { transform: scaleY(1) skewY(-14deg); } to { transform: scaleY(.85) skewY(14deg); } }
+@media (prefers-reduced-motion: reduce) {
+  .grip-fish, .jaw, .bubble, .swimmer, .swimmer .bob, .swimmer .tail { animation: none; }
+  .swimmer.near { transform: translateX(calc(100vw - 260px)); } .swimmer.far { display: none; }
+}
+.mast-text { min-width: 0; flex: 1 1 260px; text-shadow: 0 0 14px var(--fabric), 0 0 4px var(--fabric); }
+.eyebrow { font-family: var(--font-display); font-weight: 600; letter-spacing: .14em; text-transform: uppercase; color: var(--thread); font-size: 15px; }
+.mast h1 { font-size: clamp(30px, 6vw, 46px); font-weight: 700; letter-spacing: .01em; }
+.mast p { margin: 4px 0 0; color: #b9c3ce; font-size: 15px; }
+.tabs { max-width: 1040px; margin: 14px auto 0; display: flex; gap: 4px; overflow-x: auto; }
+.tab { background: none; border: 0; border-bottom: 3px solid transparent; color: #b9c3ce; cursor: pointer;
+  font-family: var(--font-display); font-weight: 600; font-size: 18px; letter-spacing: .04em; text-transform: uppercase; padding: 10px 14px 9px; white-space: nowrap; }
+.tab:hover { color: #fff; }
+.tab[aria-selected="true"] { color: #fff; border-bottom-color: var(--thread); }
+
+main { max-width: 1040px; margin: 0 auto; padding-inline: 16px; padding-block: 24px 56px; }
+.view { display: grid; gap: 20px; }
+.sec-head { display: flex; align-items: end; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+.sec-head h2 { font-size: 30px; font-weight: 700; }
+.sub { color: var(--muted); margin: 2px 0 0; font-size: 15px; }
+
+/* Leader strip */
+.strip { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 12px; }
+.stat { background: var(--surface); border: 1px solid var(--line); border-radius: 6px; padding: 12px 14px; min-width: 0; }
+.stat .k { font-size: 13px; color: var(--muted); text-transform: uppercase; letter-spacing: .08em; font-weight: 600; }
+.stat .v { font-family: var(--font-display); font-size: 28px; font-weight: 700; line-height: 1.15; }
+.stat .d { font-size: 14px; color: var(--muted); }
+.stat.lead { background: var(--fabric); border-color: var(--fabric); color: #f2f4f7; }
+.stat.lead .k { color: var(--thread); }
+.stat.lead .d { color: #b9c3ce; }
+
+.ctl { display: flex; align-items: center; gap: 8px; font-size: 15px; color: var(--muted); }
+select, input[type="text"], input[type="number"], input[type="date"], input[type="search"] {
+  background: var(--surface); border: 1px solid var(--line); border-radius: 5px; padding: 7px 10px; min-width: 0; }
+
+/* League table */
+.tbl-wrap { overflow-x: auto; background: var(--surface); border: 1px solid var(--line); border-radius: 6px; }
+table { border-collapse: collapse; width: 100%; font-size: 15px; }
+th, td { padding: 7px 8px; text-align: center; white-space: nowrap; }
+thead th { font-family: var(--font-display); font-weight: 600; font-size: 14px; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); border-bottom: 1px solid var(--line); background: var(--surface); }
+tbody tr + tr td { border-top: 1px solid var(--line); }
+td.pos { font-family: var(--font-display); font-weight: 700; font-size: 18px; width: 44px; color: var(--muted); }
+tr.top3 td.pos { color: var(--gold-ink); }
+td.name { text-align: left; font-weight: 600; }
+.sticky { position: sticky; left: 0; background: var(--surface); z-index: 1; }
+.sticky2 { position: sticky; left: 44px; background: var(--surface); z-index: 1; box-shadow: 1px 0 0 var(--line); }
+td.total { font-family: var(--font-display); font-size: 20px; font-weight: 700; }
+td.cell { font-variant-numeric: tabular-nums; min-width: 34px; padding: 5px 4px; }
+td.cell span { display: block; border-radius: 4px; padding: 2px 0; }
+td.cell .win { background: var(--gold-fill); color: var(--gold-ink); font-weight: 700; }
+td.cell .zero { color: var(--line); }
+td.cell .dropped { text-decoration: line-through; opacity: .5; }
+.linkbtn { background: none; border: 0; padding: 0; cursor: pointer; font-weight: 600; text-align: left; }
+.linkbtn:hover { color: var(--cod); text-decoration: underline; }
+.key { display: flex; flex-wrap: wrap; gap: 14px; font-size: 14px; color: var(--muted); }
+.key i { display: inline-block; width: 14px; height: 14px; border-radius: 3px; vertical-align: -2px; margin-right: 5px; }
+
+/* Matches */
+.cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 12px; }
+.mcard { background: var(--surface); border: 1px solid var(--line); border-radius: 6px; padding: 14px; text-align: left; cursor: pointer; display: grid; gap: 8px; align-content: start; }
+.mcard:hover { border-color: var(--cod); }
+.mcard[aria-pressed="true"] { border-color: var(--cod); box-shadow: inset 0 0 0 1px var(--cod); }
+.mcard h3 { font-size: 24px; font-weight: 700; display: flex; justify-content: space-between; align-items: baseline; gap: 8px; }
+.mcard h3 small { font-family: var(--font-body); font-size: 14px; font-weight: 600; color: var(--muted); }
+.meta { font-size: 14px; color: var(--muted); }
+.podium { list-style: none; margin: 0; padding: 0; display: grid; gap: 2px; font-size: 15px; }
+.podium li { display: flex; justify-content: space-between; gap: 8px; }
+.podium li:first-child { font-weight: 700; }
+.chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.chip { font-size: 13px; font-weight: 600; padding: 2px 8px; border-radius: 99px; background: var(--warn-fill); color: var(--warn); }
+.chip.info { background: var(--cod-soft); color: var(--cod); }
+.panel { background: var(--surface); border: 1px solid var(--line); border-radius: 6px; padding: 18px; display: grid; gap: 14px; min-width: 0; }
+.panel h3 { font-size: 26px; font-weight: 700; }
+.result-list { list-style: none; margin: 0; padding: 0; columns: 2 260px; column-gap: 28px; }
+.result-list li { display: grid; grid-template-columns: 34px 1fr auto; gap: 8px; padding: 4px 0; border-bottom: 1px solid var(--line); break-inside: avoid; }
+.result-list .p { font-family: var(--font-display); font-weight: 700; color: var(--muted); }
+.result-list .pts { font-family: var(--font-display); font-weight: 700; font-variant-numeric: tabular-nums; }
+
+/* Anglers */
+.anglers { display: grid; grid-template-columns: minmax(0, 300px) minmax(0, 1fr); gap: 16px; align-items: start; }
+@media (max-width: 720px) { .anglers { grid-template-columns: 1fr; } }
+.alist { background: var(--surface); border: 1px solid var(--line); border-radius: 6px; padding: 10px; display: grid; gap: 8px; }
+.alist ul { list-style: none; margin: 0; padding: 0; max-height: 520px; overflow-y: auto; }
+.alist li button { width: 100%; display: flex; justify-content: space-between; gap: 8px; background: none; border: 0; border-radius: 4px; padding: 6px 8px; cursor: pointer; text-align: left; }
+.alist li button:hover { background: var(--bg); }
+.alist li button[aria-current="true"] { background: var(--cod-soft); color: var(--cod); font-weight: 700; }
+.prof-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(110px, 1fr)); gap: 10px; }
+.prof-stats div { border-left: 3px solid var(--line); padding-left: 10px; }
+.prof-stats .v { font-family: var(--font-display); font-size: 26px; font-weight: 700; line-height: 1.1; }
+.prof-stats .k { font-size: 13px; color: var(--muted); text-transform: uppercase; letter-spacing: .06em; font-weight: 600; }
+.chart svg { width: 100%; height: auto; display: block; }
+.note { background: var(--warn-fill); color: var(--warn); border-radius: 6px; padding: 10px 12px; font-size: 15px; }
+
+.field { display: grid; gap: 4px; font-size: 14px; font-weight: 600; color: var(--muted); }
+.btn { border: 1px solid var(--line); background: var(--surface); border-radius: 5px; padding: 8px 14px; cursor: pointer; font-weight: 600; }
+.btn:hover { border-color: var(--cod); }
+.empty { color: var(--muted); padding: 30px 0; text-align: center; }
+@media (prefers-reduced-motion: no-preference) { .mcard, .btn, .tab { transition: border-color .15s, color .15s, background .15s; } }
+</style>
+</head>
+<body>
+
+<header class="mast">
+  <div class="sea" aria-hidden="true">
+    <div class="swimmer far"><div class="bob"></div></div>
+    <div class="swimmer near"><div class="bob"></div></div>
+  </div>
+  <div class="mast-in">
+    <svg class="badge" id="badge" viewBox="0 0 320 212" role="img" aria-label="Easington Fishing Club badge: a cod held between finger and thumb">
+      <defs>
+        <linearGradient id="codSkin" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stop-color="#4f7fbf"/><stop offset=".55" stop-color="#7ea7da"/><stop offset="1" stop-color="#b4cdec"/>
+        </linearGradient>
+        <linearGradient id="skin" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0" stop-color="#f1f3f6"/><stop offset="1" stop-color="#c9d0d8"/>
+        </linearGradient>
+        <pattern id="scales" width="9" height="7" patternUnits="userSpaceOnUse">
+          <path d="M0 7 Q4.5 1 9 7" fill="none" stroke="#3d6aa6" stroke-opacity=".28" stroke-width="1"/>
+        </pattern>
+        <path id="arc" d="M34 124 A126 100 0 0 1 286 124"/>
+      </defs>
+      <text class="badge-text"><textPath href="#arc" startOffset="50%" text-anchor="middle">Easington Fishing Club</textPath></text>
+
+      <!-- thumb, behind the fish -->
+      <g transform="rotate(-5 125 140)">
+        <rect x="106" y="70" width="38" height="112" rx="18" fill="url(#skin)" stroke="#8b96a3" stroke-width="2"/>
+        <rect x="113" y="77" width="24" height="25" rx="9" fill="#fbfcfd" stroke="#8b96a3" stroke-width="1.6"/>
+        <path d="M117 92 q8 5 16 0" fill="none" stroke="#8b96a3" stroke-width="1.4"/>
+      </g>
+
+      <!-- the cod -->
+      <g class="grip-fish">
+        <path d="M184 104 L192 80 L199 90 L205 76 L211 88 L218 79 L222 104 Z" fill="#6f98cf" stroke="#2f5a91" stroke-width="1.8" stroke-linejoin="round"/>
+        <path d="M54 146 C62 124 94 108 140 103 C182 99 232 98 272 101 L272 170 C224 172 176 174 140 173 C104 172 72 167 60 158 Z" fill="url(#codSkin)" stroke="#2f5a91" stroke-width="2.2" stroke-linejoin="round"/>
+        <path d="M54 146 C62 124 94 108 140 103 C182 99 232 98 272 101 L272 170 C224 172 176 174 140 173 C104 172 72 167 60 158 Z" fill="url(#scales)"/>
+        <path d="M136 134 C180 124 226 123 270 126" fill="none" stroke="#e8f0fa" stroke-width="2" stroke-linecap="round" opacity=".85"/>
+        <path d="M130 108 Q116 138 132 170" fill="none" stroke="#2f5a91" stroke-width="2.2" stroke-linecap="round"/>
+        <path d="M120 113 Q110 138 122 164" fill="none" stroke="#2f5a91" stroke-width="1.4" stroke-linecap="round" opacity=".6"/>
+        <circle cx="96" cy="127" r="8" fill="#eef4fb" stroke="#2f5a91" stroke-width="1.8"/>
+        <circle cx="94" cy="127" r="4" fill="#14202e"/>
+        <circle cx="92.5" cy="125.5" r="1.3" fill="#fff"/>
+        <path d="M56 146 L84 144" stroke="#2f5a91" stroke-width="2" stroke-linecap="round"/>
+        <path class="jaw" d="M84 147 L58 151 C60 157 68 162 82 160 Z" fill="#a9c4e8" stroke="#2f5a91" stroke-width="1.8" stroke-linejoin="round"/>
+        <path d="M72 161 C70 168 68 174 63 179" fill="none" stroke="#c9d0d8" stroke-width="2.2" stroke-linecap="round"/>
+        <circle cx="63" cy="180" r="2.4" fill="#c9d0d8"/>
+      </g>
+      <circle class="bubble" cx="50" cy="140" r="4"/>
+      <circle class="bubble b2" cx="46" cy="136" r="3"/>
+      <circle class="bubble b3" cx="52" cy="142" r="5"/>
+
+      <!-- finger and palm, in front of the fish -->
+      <path d="M104 164 Q104 160 110 160 L140 160 Q146 160 148 166 L156 186 L230 168 L258 178 L248 197 Q244 204 236 204 L114 204 Q104 204 104 194 Z" fill="url(#skin)" stroke="#8b96a3" stroke-width="2" stroke-linejoin="round"/>
+      <path d="M154 194 Q160 198 168 196" fill="none" stroke="#8b96a3" stroke-width="1.6" stroke-linecap="round"/>
+      <g transform="rotate(13 232 140)">
+        <rect x="214" y="66" width="38" height="132" rx="19" fill="url(#skin)" stroke="#8b96a3" stroke-width="2"/>
+        <rect x="221" y="72" width="24" height="27" rx="9" fill="#fbfcfd" stroke="#8b96a3" stroke-width="1.6"/>
+        <path d="M225 88 q8 5 16 0" fill="none" stroke="#8b96a3" stroke-width="1.4"/>
+        <path d="M224 128 q9 -4 18 0 M226 134 q7 -3 14 0" fill="none" stroke="#8b96a3" stroke-width="1.4" stroke-linecap="round"/>
+        <path d="M224 164 q9 -4 18 0 M226 170 q7 -3 14 0" fill="none" stroke="#8b96a3" stroke-width="1.4" stroke-linecap="round"/>
+      </g>
+    </svg>
+    <div class="mast-text">
+      <div class="eyebrow" id="season-line">Points Championship</div>
+      <h1>Easington Sea Angling Club</h1>
+      <p id="mast-sub">Club league, match results and angler records</p>
+    </div>
+  </div>
+  <nav class="tabs" role="tablist" aria-label="Sections">
+    <button class="tab" role="tab" id="tab-table" data-view="table" aria-selected="true">League table</button>
+    <button class="tab" role="tab" id="tab-matches" data-view="matches" aria-selected="false">Matches</button>
+    <button class="tab" role="tab" id="tab-anglers" data-view="anglers" aria-selected="false">Anglers</button>
+  </nav>
+</header>
+
+<main id="main"><p class="empty">Loading the league…</p></main>
+
+<script>
+(function () {
+  const $ = (s, el = document) => el.querySelector(s);
+  const esc = s => String(s).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+  let data = null, view = "table", bestN = 0, openMatch = null, angler = null, filter = "";
+
+  try { const v = localStorage.getItem("esac-view"); if (v) view = v; } catch (e) {}
+  if (/^#(table|matches|anglers)$/.test(location.hash)) view = location.hash.slice(1);
+
+  // ---------- scoring ----------
+  function matchesSorted() { return [...data.matches].sort((a, b) => a.no - b.no); }
+  function standings() {
+    const ms = matchesSorted();
+    const names = new Set(); ms.forEach(m => Object.keys(m.results).forEach(n => names.add(n)));
+    const rows = [...names].map(name => {
+      const pts = ms.map(m => m.results[name] || 0);
+      const fished = pts.filter(p => p > 0).length;
+      let counted = pts.map(() => true);
+      if (bestN && bestN < ms.length) {
+        const order = pts.map((p, i) => [p, i]).sort((a, b) => b[0] - a[0]);
+        counted = pts.map(() => false); order.slice(0, bestN).forEach(([, i]) => counted[i] = true);
+      }
+      const total = pts.reduce((s, p, i) => s + (counted[i] ? p : 0), 0);
+      const wins = ms.filter(m => (m.results[name] || 0) > 0 && m.results[name] === Math.max(...Object.values(m.results))).length;
+      return { name, pts, counted, total, fished, wins };
+    });
+    rows.sort((a, b) => b.total - a.total || b.wins - a.wins || a.name.localeCompare(b.name));
+    rows.forEach((r, i) => {
+      r.pos = i > 0 && rows[i - 1].total === r.total ? rows[i - 1].pos : i + 1;
+    });
+    rows.forEach(r => r.joint = rows.filter(o => o.pos === r.pos).length > 1);
+    return rows;
+  }
+  function placeOf(m) { // finishing order with shared places for equal points
+    const list = Object.entries(m.results).sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]));
+    return list.map(([n, p], i) => ({ name: n, pts: p, place: list.findIndex(x => x[1] === p) + 1 }));
+  }
+  function matchChecks(m) {
+    const out = [];
+    const pts = Object.values(m.results).sort((a, b) => b - a);
+    const n = pts.length;
+    if (n && pts[0] !== 20) out.push({ t: "Winner scored " + pts[0] + ", not 20", w: true });
+    const scored = pts.filter(p => p > 1);
+    let skipTies = 0, denseTies = 0;
+    for (let i = 0; i < scored.length;) {
+      const p = scored[i]; let j = i; while (j < scored.length && scored[j] === p) j++;
+      const count = j - i, next = scored[j];
+      if (next !== undefined) {
+        if (next === p - 1 && count > 1) denseTies++;
+        else if (next === p - count && count > 1) skipTies++;
+        else if (next !== p - 1) {
+          const missing = []; for (let v = p - 1; v > next; v--) missing.push(v);
+          out.push({ t: "No " + missing.join(", ") + " pts awarded", w: true });
+        }
+      }
+      i = j;
+    }
+    if (skipTies) out.push({ t: "Tie skips a place", w: true });
+    if (denseTies) out.push({ t: "Tie, no place skipped", w: false });
+    const blanks = pts.filter(p => p === 1).length;
+    if (blanks) out.push({ t: blanks + " fished, no weight (1 pt)", w: false });
+    if (n < 5) out.push({ t: "Only " + n + " fished", w: false });
+    return out;
+  }
+  function lookalikes(names) {
+    const out = [];
+    for (let i = 0; i < names.length; i++) for (let j = i + 1; j < names.length; j++) {
+      const a = names[i].split(" "), b = names[j].split(" ");
+      if (a.length > 1 && b.length > 1 && a.at(-1) === b.at(-1) && a[0][0] === b[0][0]) out.push([names[i], names[j]]);
+    }
+    return out;
+  }
+  const fmtDate = d => d ? new Date(d + "T12:00:00").toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" }) : "";
+  const ord = n => n + (n % 100 >= 11 && n % 100 <= 13 ? "th" : ({ 1: "st", 2: "nd", 3: "rd" }[n % 10] || "th"));
+
+  // ---------- views ----------
+  function renderTable() {
+    const ms = matchesSorted(), rows = standings();
+    const lead = rows[0], second = rows[1];
+    const nOpts = [0]; for (let k = ms.length - 1; k >= Math.max(1, ms.length - 4); k--) nOpts.push(k);
+    const attendance = ms.reduce((s, m) => s + Object.keys(m.results).length, 0);
+    const mostWins = [...rows].sort((a, b) => b.wins - a.wins)[0];
+    return `
+      <section class="view">
+        <div class="strip">
+          <div class="stat lead"><div class="k">Leader</div><div class="v">${esc(lead.name)}</div><div class="d num">${lead.total} pts${second ? ", " + (lead.total - second.total) + " clear of " + esc(second.name) : ""}</div></div>
+          <div class="stat"><div class="k">Matches fished</div><div class="v num">${ms.length}</div><div class="d">${data.season} season</div></div>
+          <div class="stat"><div class="k">Anglers entered</div><div class="v num">${rows.length}</div><div class="d num">${(attendance / ms.length).toFixed(1)} per match on average</div></div>
+          <div class="stat"><div class="k">Most match wins</div><div class="v">${esc(mostWins.name)}</div><div class="d num">${mostWins.wins} win${mostWins.wins === 1 ? "" : "s"}</div></div>
+        </div>
+        <div class="sec-head">
+          <div><h2>Points Championship ${esc(data.season)}</h2><p class="sub">20 points for a win, one less for each place behind. Anglers who fish but don't weigh in get 1 point.</p></div>
+          <label class="ctl" for="bestn">Count
+            <select id="bestn">${nOpts.map(k => `<option value="${k}"${k === bestN ? " selected" : ""}>${k ? "Best " + k + " of " + ms.length : "Every match"}</option>`).join("")}</select>
+          </label>
+        </div>
+        <div class="tbl-wrap">
+          <table>
+            <thead><tr><th class="sticky">Pos</th><th class="sticky2" style="text-align:left">Angler</th>${ms.map(m => `<th title="Match ${m.no}">M${m.no}</th>`).join("")}<th>Fished</th><th>Wins</th><th>Total</th></tr></thead>
+            <tbody>${rows.map(r => `
+              <tr class="${r.pos <= 3 ? "top3" : ""}">
+                <td class="pos sticky num">${r.joint ? "=" : ""}${r.pos}</td>
+                <td class="name sticky2"><button class="linkbtn" data-angler="${esc(r.name)}">${esc(r.name)}</button></td>
+                ${r.pts.map((p, i) => {
+                  if (!p) return `<td class="cell"><span class="zero">·</span></td>`;
+                  const isWin = p === Math.max(...Object.values(ms[i].results));
+                  const a = (0.08 + 0.5 * (p / 20) ** 2).toFixed(2);
+                  return `<td class="cell"><span class="${isWin ? "win" : ""}${r.counted[i] ? "" : " dropped"}" style="${isWin ? "" : `background: rgb(var(--heat) / ${a})`}">${p}</span></td>`;
+                }).join("")}
+                <td class="num">${r.fished}</td><td class="num">${r.wins || ""}</td><td class="total num">${r.total}</td>
+              </tr>`).join("")}</tbody>
+          </table>
+        </div>
+        <div class="key"><span><i style="background: var(--gold-fill)"></i>Match winner</span><span><i style="background: rgb(var(--heat) / .5)"></i>Darker means more points</span>${bestN ? "<span><s>12</s> Dropped score, not counted</span>" : ""}<span>· Did not fish</span></div>
+      </section>`;
+  }
+
+  function renderMatches() {
+    const ms = matchesSorted().reverse();
+    const m = openMatch != null ? data.matches.find(x => x.no === openMatch) : null;
+    return `
+      <section class="view">
+        <div class="sec-head"><div><h2>Match results</h2><p class="sub">Tap a match to see the full result. Flags point out scoring that doesn't follow the usual pattern.</p></div></div>
+        ${m ? matchPanel(m) : ""}
+        <div class="cards">${ms.map(x => {
+          const pl = placeOf(x), checks = matchChecks(x).filter(c => c.w);
+          return `<button class="mcard" data-match="${x.no}" aria-pressed="${x.no === openMatch}">
+            <h3>Match ${x.no} <small class="num">${pl.length} fished</small></h3>
+            ${x.date || x.venue ? `<div class="meta">${esc([fmtDate(x.date), x.venue].filter(Boolean).join(" · "))}</div>` : ""}
+            <ol class="podium">${pl.slice(0, 3).map(r => `<li><span>${esc(r.name)}</span><span class="num">${r.pts}</span></li>`).join("")}</ol>
+            ${checks.length ? `<div class="chips">${checks.map(c => `<span class="chip">${esc(c.t)}</span>`).join("")}</div>` : ""}
+          </button>`;
+        }).join("")}</div>
+      </section>`;
+  }
+  function matchPanel(m) {
+    const pl = placeOf(m), checks = matchChecks(m);
+    return `<div class="panel" id="match-panel">
+      <div class="sec-head"><div><h3>Match ${m.no}</h3><p class="sub">${esc([fmtDate(m.date), m.venue].filter(Boolean).join(" · ") || "Date and venue not recorded yet")}</p></div>
+      <button class="btn" data-close>Close</button></div>
+      ${checks.length ? `<div class="chips">${checks.map(c => `<span class="chip${c.w ? "" : " info"}">${esc(c.t)}</span>`).join("")}</div>` : ""}
+      <ol class="result-list">${pl.map(r => `<li><span class="p num">${r.pts > 1 ? ord(r.place) : "–"}</span><button class="linkbtn" data-angler="${esc(r.name)}">${esc(r.name)}</button><span class="pts">${r.pts}</span></li>`).join("")}</ol>
+    </div>`;
+  }
+
+  function renderAnglers() {
+    const rows = standings();
+    if (!angler || !rows.find(r => r.name === angler)) angler = rows[0].name;
+    const f = filter.trim().toLowerCase();
+    const shown = rows.filter(r => !f || r.name.toLowerCase().includes(f));
+    const r = rows.find(x => x.name === angler);
+    const ms = matchesSorted();
+    const fishedPts = r.pts.filter(p => p > 0);
+    const avg = fishedPts.length ? (fishedPts.reduce((a, b) => a + b, 0) / fishedPts.length).toFixed(1) : "–";
+    const podiums = ms.filter(m => { const p = placeOf(m).find(x => x.name === r.name); return p && p.pts > 1 && p.place <= 3; }).length;
+    const dupes = lookalikes(rows.map(x => x.name)).filter(p => p.includes(r.name));
+    return `
+      <section class="view">
+        <div class="sec-head"><div><h2>Anglers</h2><p class="sub">Season record for every angler who has fished a club match.</p></div></div>
+        <div class="anglers">
+          <div class="alist">
+            <label for="afilter" class="field">Find an angler<input type="search" id="afilter" value="${esc(filter)}" placeholder="Type a name"></label>
+            <ul>${shown.map(x => `<li><button data-angler="${esc(x.name)}" aria-current="${x.name === angler}"><span>${esc(x.name)}</span><span class="num">${x.total}</span></button></li>`).join("") || `<li class="empty">No angler matches “${esc(filter)}”.</li>`}</ul>
+          </div>
+          <div class="panel">
+            <div><div class="eyebrow" style="color: var(--cod)">${r.joint ? "Joint " : ""}${ord(r.pos)} in the league</div><h3>${esc(r.name)}</h3></div>
+            ${dupes.length ? `<div class="note">${dupes.map(([a, b]) => `${esc(a)} and ${esc(b)} might be the same person.`).join(" ")} Check with the match secretary before merging their points.</div>` : ""}
+            <div class="prof-stats">
+              <div><div class="v num">${r.total}</div><div class="k">Points</div></div>
+              <div><div class="v num">${r.fished}/${ms.length}</div><div class="k">Matches fished</div></div>
+              <div><div class="v num">${r.wins}</div><div class="k">Wins</div></div>
+              <div><div class="v num">${podiums}</div><div class="k">Top 3 finishes</div></div>
+              <div><div class="v num">${avg}</div><div class="k">Avg per match</div></div>
+            </div>
+            <div class="chart">${chart(r, ms)}</div>
+          </div>
+        </div>
+      </section>`;
+  }
+  function chart(r, ms) {
+    const W = 640, H = 220, L = 34, B = 30, T = 12, R = 8;
+    const bw = (W - L - R) / ms.length, y = v => T + (H - T - B) * (1 - v / 20);
+    let s = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Points per match for ${esc(r.name)}">`;
+    [0, 5, 10, 15, 20].forEach(v => {
+      s += `<line x1="${L}" x2="${W - R}" y1="${y(v)}" y2="${y(v)}" stroke="var(--line)" stroke-width="1"/>`;
+      s += `<text x="${L - 8}" y="${y(v) + 4}" text-anchor="end" font-size="12" fill="var(--muted)">${v}</text>`;
+    });
+    ms.forEach((m, i) => {
+      const p = r.pts[i], x = L + i * bw + bw * 0.18, w = bw * 0.64;
+      const isWin = p && p === Math.max(...Object.values(m.results));
+      if (p) s += `<rect x="${x}" y="${y(p)}" width="${w}" height="${y(0) - y(p)}" rx="3" fill="${isWin ? "var(--thread)" : "var(--cod)"}"><title>Match ${m.no}: ${p} pts</title></rect>`;
+      s += `<text x="${x + w / 2}" y="${p ? y(p) - 4 : y(0) - 4}" text-anchor="middle" font-size="12" font-weight="600" fill="${p ? "var(--ink)" : "var(--muted)"}">${p || "–"}</text>`;
+      s += `<text x="${x + w / 2}" y="${H - 10}" text-anchor="middle" font-size="12" fill="var(--muted)">M${m.no}</text>`;
+    });
+    return s + "</svg>";
+  }
+
+  // ---------- the swimming cod ----------
+  const COD = `<svg viewBox="0 0 200 80">
+    <g fill="#6f98cf" stroke="#2f5a91" stroke-width="1.6" stroke-linejoin="round">
+      <path d="M68 19 L79 5 L92 18 Z"/><path d="M99 18 L110 6 L123 21 Z"/><path d="M130 23 L141 12 L151 30 Z"/>
+      <path d="M98 61 L108 73 L121 59 Z"/><path d="M128 57 L139 68 L149 52 Z"/>
+      <path class="tail" d="M161 35 L193 17 Q186 42 193 67 L161 49 Z"/>
+    </g>
+    <path d="M7 42 C15 24 52 14 96 16 C128 18 150 26 165 35 L165 49 C148 58 124 64 92 63 C54 62 19 58 7 42 Z" fill="url(#codSkin)" stroke="#2f5a91" stroke-width="1.8"/>
+    <path d="M7 42 C15 24 52 14 96 16 C128 18 150 26 165 35 L165 49 C148 58 124 64 92 63 C54 62 19 58 7 42 Z" fill="url(#scales)"/>
+    <path d="M44 37 C90 30 130 32 163 42" fill="none" stroke="#e8f0fa" stroke-width="1.6" opacity=".8"/>
+    <path d="M41 22 Q32 40 43 57" fill="none" stroke="#2f5a91" stroke-width="1.8" stroke-linecap="round"/>
+    <path d="M47 46 L64 53 L48 56 Z" fill="#a9c4e8" stroke="#2f5a91" stroke-width="1.3"/>
+    <circle cx="24" cy="34" r="5" fill="#eef4fb" stroke="#2f5a91" stroke-width="1.4"/><circle cx="23" cy="34" r="2.6" fill="#14202e"/>
+    <path d="M8 42 L22 43" stroke="#2f5a91" stroke-width="1.6" stroke-linecap="round"/>
+    <path d="M19 51 Q18 57 14 61" fill="none" stroke="#c9d0d8" stroke-width="1.6" stroke-linecap="round"/>
+  </svg>`;
+  document.querySelectorAll(".swimmer .bob").forEach(el => { el.innerHTML = COD; });
+  const badge = $("#badge");
+  badge.addEventListener("click", () => { badge.classList.remove("splash"); void badge.getBoundingClientRect(); badge.classList.add("splash"); });
+  badge.addEventListener("animationend", e => { if (e.animationName === "thrash") badge.classList.remove("splash"); });
+
+  // ---------- shell ----------
+  function renderHeader() {
+    $("#season-line").textContent = "Points Championship " + data.season;
+    const n = data.matches.length;
+    $("#mast-sub").textContent = n + " match" + (n === 1 ? "" : "es") + " fished · last updated " + fmtDate(data.updated);
+  }
+  function render() {
+    if (!["table", "matches", "anglers"].includes(view)) view = "table";
+    document.querySelectorAll(".tab").forEach(t => t.setAttribute("aria-selected", String(t.dataset.view === view)));
+    const html = { table: renderTable, matches: renderMatches, anglers: renderAnglers }[view]();
+    $("#main").innerHTML = html;
+  }
+  function go(v) { view = v; try { localStorage.setItem("esac-view", v); } catch (e) {} render(); }
+
+  document.addEventListener("click", e => {
+    const t = e.target.closest("button"); if (!t) return;
+    if (t.classList.contains("tab")) return go(t.dataset.view);
+    if (t.dataset.angler) { angler = t.dataset.angler; filter = ""; go("anglers"); window.scrollTo({ top: 0 }); return; }
+    if (t.dataset.match) { openMatch = Number(t.dataset.match) === openMatch ? null : Number(t.dataset.match); render(); $("#match-panel")?.scrollIntoView({ block: "nearest" }); return; }
+    if (t.hasAttribute("data-close")) { openMatch = null; render(); return; }
+  });
+  document.addEventListener("change", e => {
+    if (e.target.id === "bestn") { bestN = Number(e.target.value); render(); }
+  });
+  document.addEventListener("input", e => {
+    if (e.target.id === "afilter") {
+      filter = e.target.value; const pos = e.target.selectionStart; render();
+      const f = $("#afilter"); f.focus(); f.setSelectionRange(pos, pos);
+    }
+  });
+
+  fetch("data/league.json", { cache: "no-store" }).then(r => { if (!r.ok) throw new Error(r.status); return r.json(); })
+    .then(d => { data = d; renderHeader(); render(); })
+    .catch(() => { $("#main").innerHTML = `<p class="empty">The results file didn't load. Refresh the page to try again.</p>`; });
+
+})();
+</script>
+
+</body>
+</html>

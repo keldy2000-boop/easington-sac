@@ -6,6 +6,15 @@
 <meta name="description" content="Easington Sea Angling Club: Points Championship league table, match results and angler records.">
 <style>:root{color-scheme:light;padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bottom)}body{margin:0;font:14px system-ui,sans-serif}img{max-width:100%}[hidden]{display:none!important}</style>
 <title>Easington Sea Angling Club</title>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="icon" href="icon-192.png" type="image/png" sizes="192x192">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="theme-color" content="#262f39">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Easington SAC">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Fredoka:wght@600&family=Source+Sans+3:wght@400;600;700&display=swap">
@@ -178,6 +187,21 @@ td.cell .dropped { text-decoration: line-through; opacity: .5; }
 .btn:hover { border-color: var(--cod); }
 .empty { color: var(--muted); padding: 30px 0; text-align: center; }
 @media (prefers-reduced-motion: no-preference) { .mcard, .btn, .tab { transition: border-color .15s, color .15s, background .15s; } }
+
+/* Add to Home Screen */
+.install { display: inline-flex; align-items: center; gap: 8px; margin-top: 10px; background: #e6c740; color: #1b222a; border: 0; border-radius: 99px;
+  padding: 8px 16px 8px 10px; font-family: var(--font-display); font-weight: 700; font-size: 17px; letter-spacing: .03em; cursor: pointer; text-shadow: none; }
+.install:hover { background: #f0d55a; }
+.install img { width: 26px; height: 26px; border-radius: 6px; }
+.sheet { border: 0; border-radius: 12px; padding: 0; width: min(420px, calc(100vw - 32px)); background: var(--surface); color: var(--ink); box-shadow: 0 20px 60px rgb(0 0 0 / .35); }
+.sheet::backdrop { background: rgb(10 15 20 / .55); }
+.sheet-in { padding: 20px; display: grid; gap: 14px; }
+.sheet-head { display: flex; align-items: center; gap: 12px; }
+.sheet-head img { width: 52px; height: 52px; border-radius: 12px; }
+.sheet h2 { font-size: 26px; }
+.steps { margin: 0; padding-left: 22px; display: grid; gap: 10px; font-size: 16px; }
+.steps b { white-space: nowrap; }
+.glyph { display: inline-block; vertical-align: -3px; width: 18px; height: 18px; color: var(--cod); }
 </style>
 </head>
 <body>
@@ -245,6 +269,7 @@ td.cell .dropped { text-decoration: line-through; opacity: .5; }
       <div class="eyebrow" id="season-line">Points Championship</div>
       <h1>Easington Sea Angling Club</h1>
       <p id="mast-sub">Club league, match results and angler records</p>
+      <button class="install" id="install" type="button" hidden><img src="icon-192.png" alt=""><span id="install-label">Add to Home Screen</span></button>
     </div>
   </div>
   <nav class="tabs" role="tablist" aria-label="Sections">
@@ -255,6 +280,15 @@ td.cell .dropped { text-decoration: line-through; opacity: .5; }
 </header>
 
 <main id="main"><p class="empty">Loading the league…</p></main>
+
+<dialog class="sheet" id="install-help" aria-labelledby="install-title">
+  <form method="dialog" class="sheet-in">
+    <div class="sheet-head"><img src="apple-touch-icon.png" alt=""><h2 id="install-title">Add the club app to your phone</h2></div>
+    <ol class="steps" id="install-steps"></ol>
+    <p class="sub">The cod badge appears on your home screen. Tap it to open the league straight away.</p>
+    <button class="btn" value="close">Got it</button>
+  </form>
+</dialog>
 
 <script>
 (function () {
@@ -509,6 +543,48 @@ td.cell .dropped { text-decoration: line-through; opacity: .5; }
     .then(d => { data = d; renderHeader(); render(); })
     .catch(() => { $("#main").innerHTML = `<p class="empty">The results file didn't load. Refresh the page to try again.</p>`; });
 
+  // ---------- app install / Add to Home Screen ----------
+  if ("serviceWorker" in navigator && location.protocol === "https:") navigator.serviceWorker.register("sw.js").catch(() => {});
+  const ua = navigator.userAgent;
+  const isIOS = /iPhone|iPad|iPod/.test(ua) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
+  const isAndroid = /Android/.test(ua);
+  const isPhone = isIOS || isAndroid;
+  const installed = () => matchMedia("(display-mode: standalone)").matches || navigator.standalone === true;
+  const installBtn = $("#install");
+  let deferred = null;
+  $("#install-label").textContent = isPhone ? "Add to Home Screen" : "Install the app";
+  installBtn.hidden = installed();
+  window.addEventListener("beforeinstallprompt", e => { e.preventDefault(); deferred = e; installBtn.hidden = installed(); });
+  window.addEventListener("appinstalled", () => { installBtn.hidden = true; deferred = null; });
+  const share = `<svg class="glyph" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12M7 8l5-5 5 5"/><path d="M5 12v8h14v-8"/></svg>`;
+  function steps() {
+    if (isIOS) return [
+      `Tap the <b>Share</b> button ${share}. In Safari it's at the bottom of the screen (top right on iPad).`,
+      "Scroll down and tap <b>Add to Home Screen</b>.",
+      "Tap <b>Add</b>.",
+      "Can't see <b>Add to Home Screen</b>? Open this page in <b>Safari</b> and try again."];
+    if (isAndroid) return [
+      "Tap the <b>⋮ menu</b> at the top right of Chrome.",
+      "Tap <b>Add to Home screen</b> (or <b>Install app</b>).",
+      "Tap <b>Add</b> or <b>Install</b>."];
+    return [
+      "In Chrome or Edge, click the <b>install icon</b> at the right-hand end of the address bar.",
+      "Or open the browser's <b>⋮ / ⋯ menu</b> and choose <b>Install Easington Sea Angling Club</b> (in Edge: <b>Apps → Install this site as an app</b>).",
+      "The app opens in its own window and gets an icon on your desktop and Start menu."];
+  }
+  installBtn.addEventListener("click", async () => {
+    if (deferred) {
+      deferred.prompt();
+      const { outcome } = await deferred.userChoice.catch(() => ({}));
+      deferred = null;
+      if (outcome === "accepted") installBtn.hidden = true;
+      return;
+    }
+    $("#install-title").textContent = isPhone ? "Add the club app to your phone" : "Install the club app on this computer";
+    $("#install-steps").innerHTML = steps().map(s => `<li>${s}</li>`).join("");
+    const d = $("#install-help");
+    if (d.showModal) d.showModal(); else d.setAttribute("open", "");
+  });
 })();
 </script>
 

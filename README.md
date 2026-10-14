@@ -21,3 +21,13 @@ All results live in [`data/league.json`](data/league.json). To add a match, add 
 - Spell names exactly as they already appear, so their points add up.
 
 Update `"updated"` to today's date, commit, and the website refreshes within a minute or two.
+
+## Installing the app
+
+The site installs like an app, with the club badge as its icon:
+
+- **iPhone / iPad (Safari):** Share button, then **Add to Home Screen**.
+- **Android (Chrome):** tap **Add to Home Screen** on the site, or ⋮ menu, then **Add to Home screen**.
+- **Windows / Mac (Chrome or Edge):** click **Install the app** on the site, or the install icon in the address bar.
+
+When you change `index.html`, bump `CACHE` in `sw.js` (e.g. `esac-v2`) so installed copies pick up the new version.

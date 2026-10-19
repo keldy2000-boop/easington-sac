@@ -43,7 +43,7 @@
    "date": "2026-10-18",
    "venue": "",
    "notes": [
-    "Weights confirmed with the club: on the sheet each bag weight is written on the line above the angler's name."
+    "Confirmed with the club: from the crossed-out line down, the bag weight and biggest fish are written on the line above each angler's name."
    ],
    "results": {
     "Chris Fisher": {
@@ -70,10 +70,7 @@
      ]
     },
     "Jordy Critchley": {
-     "bag": 200
-    },
-    "Ray White": {
-     "bag": 130,
+     "bag": 200,
      "fish": [
       {
        "species": "Dogfish",
@@ -81,47 +78,50 @@
       }
      ]
     },
-    "Jim Evans": {
-     "bag": 113
+    "Ray White": {
+     "bag": 130
     },
-    "Craig Gawthorpe": {
-     "bag": 99,
+    "Jim Evans": {
+     "bag": 113,
      "fish": [
       {
        "species": "Dogfish",
        "oz": 28
       }
-     ],
+     ]
+    },
+    "Craig Gawthorpe": {
+     "bag": 99,
      "flats": 1
     },
     "Paul Huteson": {
      "bag": 89,
+     "flats": 1,
      "fish": [
       {
        "species": "Bass",
        "oz": 39
       }
-     ],
-     "flats": 1
+     ]
     },
     "Mark Botterill": {
      "bag": 72
     },
     "Mark Andrews": {
      "bag": 57,
-     "fish": [
-      {
-       "species": "Bass",
-       "oz": 39
-      }
-     ],
      "flats": 3
     },
     "Glen Devine": {
      "bag": 54
     },
     "Gordy Blyth": {
-     "bag": 46
+     "bag": 46,
+     "fish": [
+      {
+       "species": "Bass",
+       "oz": 39
+      }
+     ]
     },
     "Yukka": {
      "bag": 15

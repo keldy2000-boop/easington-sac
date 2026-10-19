@@ -112,16 +112,16 @@
      "flats": 3
     },
     "Glen Devine": {
-     "bag": 54
-    },
-    "Gordy Blyth": {
-     "bag": 46,
+     "bag": 54,
      "fish": [
       {
        "species": "Bass",
        "oz": 39
       }
      ]
+    },
+    "Gordy Blyth": {
+     "bag": 46
     },
     "Yukka": {
      "bag": 15

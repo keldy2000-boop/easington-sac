@@ -18,7 +18,7 @@ Each season has its own file in `data/` (listed in `data/seasons.json`). The cur
 }
 ```
 
-- Weights are in ounces: 19lb 13oz = 19 × 16 + 13 = 317.
+- Weights are in ounces: 19lb 13oz = 19 x 16 + 13 = 317.
 - `"bag": 0` means fished but didn't weigh in (1 point). Leave out anyone who didn't fish.
 - Points, the Weight Championship and the Cod Challenge are all worked out by the app.
 - Spell names exactly as they already appear, so their points add up.

@@ -1,7 +1,16 @@
 {
  "current": "2026-27",
  "seasons": [
-  { "id": "2026-27", "label": "2026/27", "file": "data/2026-27.json" },
-  { "id": "2025-26", "label": "2025/26", "file": "data/2025-26.json" }
+  {
+   "id": "2026-27",
+   "label": "2026/27",
+   "file": "data/2026-27.json",
+   "sheet": "1Pnu_oiWor-g93-A8DBLbayk2fgb62A7IwzY1TKVqIEI"
+  },
+  {
+   "id": "2025-26",
+   "label": "2025/26",
+   "file": "data/2025-26.json"
+  }
  ]
 }

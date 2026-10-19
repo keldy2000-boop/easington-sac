@@ -52,13 +52,12 @@
       {
        "species": "Dogfish",
        "oz": 36
-      },
-      {
-       "species": "Cod",
-       "oz": 28
       }
      ],
-     "note": "1 cod"
+     "cod": {
+      "count": 1,
+      "oz": 28
+     }
     },
     "Louis Watt": {
      "bag": 264,
@@ -144,7 +143,7 @@
  ],
  "silverware": {
   "fee": 20,
-  "about": "Entry fee to compete for the season's silverware.",
+  "about": "£20 entry for the Points Championship (the silverware).",
   "entrants": [
    "Rich Winship",
    "Yukka",

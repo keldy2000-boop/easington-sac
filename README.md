@@ -4,26 +4,15 @@ The club's Points Championship website: league table, match results and angler r
 
 ## Updating results
 
-Each season has its own file in `data/` (listed in `data/seasons.json`). The current season, 2026/27, records bag weights in ounces and works out points automatically. To add a match to `data/2026-27.json`, add an entry to `matches`:
+From 2026/27 the results and the list of anglers live in the club's Google Sheet, **Easington SAC Results 2026-27** (linked in `data/seasons.json`). The app reads it each time it opens, so new results show within a minute or two. The sheet must stay shared as *Anyone with the link: Viewer*.
 
-```json
-{
-  "no": 2,
-  "date": "2026-10-25",
-  "venue": "",
-  "results": {
-    "Chris Fisher": { "bag": 317, "fish": [{ "species": "Cod", "oz": 28 }] },
-    "John Clark":   { "bag": 0 }
-  }
-}
-```
+- **Results** tab: one row per angler per match (bag, biggest fish, cod caught, flats).
+- **Anglers** tab: one row per angler, with Yes under Silverware Challenge (£20) and Cod Challenge (£15).
+- The **Club** menu and phone form come from `apps-script/Code.gs`; see `apps-script/README.md`.
 
-- Weights are in ounces: 19lb 13oz = 19 x 16 + 13 = 317.
-- `"bag": 0` means fished but didn't weigh in (1 point). Leave out anyone who didn't fish.
-- Points, the Weight Championship and the Cod Challenge are all worked out by the app.
-- Spell names exactly as they already appear, so their points add up.
+If the sheet can't be reached, the app falls back to `data/2026-27.json`. Last season (2025/26) is in `data/2025-26.json`.
 
-Update `"updated"` to today's date, commit, and the website refreshes within a minute or two.
+Only Silverware Challenge entrants score in the Points and Weight tables. The Cod Challenge is won by most cod caught, with total cod weight splitting ties.
 
 ## Installing the app
 

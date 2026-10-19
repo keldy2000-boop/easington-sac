@@ -478,6 +478,21 @@ td.cell .dropped { text-decoration: line-through; opacity: .5; }
   const nameCell = n => `<td class="name sticky2"><button class="linkbtn" data-angler="${esc(n)}">${esc(n)}</button>${stars(n)}</td>`;
 
   // ---------- views ----------
+  // The row of season figures shared by the Points and Weight pages; only the first tile differs
+  function statStrip(leadTile, ms, all, attendance, mostWins) {
+    const fish = weighed() ? allFish() : [];
+    const heavy = weighed() ? [...all].sort((a, b) => b.best - a.best)[0] : null;
+    return `<div class="strip">
+          ${leadTile}
+          ${weighed() ? `
+          <div class="stat"><div class="k">Heaviest bag</div><div class="v num">${lbOz(heavy.best)}</div><div class="d">${esc(heavy.name)}</div></div>
+          <div class="stat"><div class="k">Biggest fish</div><div class="v num">${fish[0] ? lbOz(fish[0].oz) : "–"}</div><div class="d">${fish[0] ? esc(andList(fish.filter(f => f.oz === fish[0].oz).map(f => f.name + (f.species ? " (" + fishName(f) + ")" : "")))) : "None weighed yet"}</div></div>` : `
+          <div class="stat"><div class="k">Matches fished</div><div class="v num">${ms.length}</div><div class="d">${esc(data.season)} season</div></div>
+          <div class="stat"><div class="k">Most match wins</div><div class="v">${esc(mostWins.name)}</div><div class="d num">${mostWins.wins} win${mostWins.wins === 1 ? "" : "s"}</div></div>`}
+          <div class="stat"><div class="k">Anglers fished</div><div class="v num">${new Set(ms.flatMap(m => Object.keys(m.sheet || m.results))).size}</div><div class="d num">${(attendance / ms.length).toFixed(1)} per match on average</div></div>
+        </div>`;
+  }
+
   function renderTable() {
     const ms = matchesSorted(), all = standings();
     const rows = data.silverware ? all.filter(r => inSilver(r.name)) : all;
@@ -485,19 +500,9 @@ td.cell .dropped { text-decoration: line-through; opacity: .5; }
     const nOpts = [0]; for (let k = ms.length - 1; k >= Math.max(1, ms.length - 4); k--) nOpts.push(k);
     const attendance = ms.reduce((s, m) => s + Object.keys(m.sheet || m.results).length, 0);
     const mostWins = [...rows].sort((a, b) => b.wins - a.wins)[0];
-    const fish = weighed() ? allFish() : [];
-    const heavy = weighed() ? [...all].sort((a, b) => b.best - a.best)[0] : null;
     return `
       <section class="view">
-        <div class="strip">
-          <div class="stat lead"><div class="k">Points leader</div><div class="v">${esc(lead.name)}</div><div class="d num">${lead.total} pts${second ? ", " + (lead.total - second.total) + " clear of " + esc(second.name) : ""}</div></div>
-          ${weighed() ? `
-          <div class="stat"><div class="k">Heaviest bag</div><div class="v num">${lbOz(heavy.best)}</div><div class="d">${esc(heavy.name)}</div></div>
-          <div class="stat"><div class="k">Biggest fish</div><div class="v num">${fish[0] ? lbOz(fish[0].oz) : "–"}</div><div class="d">${fish[0] ? esc(andList(fish.filter(f => f.oz === fish[0].oz).map(f => f.name + (f.species ? " (" + fishName(f) + ")" : "")))) : "None weighed yet"}</div></div>` : `
-          <div class="stat"><div class="k">Matches fished</div><div class="v num">${ms.length}</div><div class="d">${esc(data.season)} season</div></div>
-          <div class="stat"><div class="k">Most match wins</div><div class="v">${esc(mostWins.name)}</div><div class="d num">${mostWins.wins} win${mostWins.wins === 1 ? "" : "s"}</div></div>`}
-          <div class="stat"><div class="k">Anglers fished</div><div class="v num">${all.length}</div><div class="d num">${(attendance / ms.length).toFixed(1)} per match on average</div></div>
-        </div>
+        ${statStrip(`<div class="stat lead"><div class="k">Points leader</div><div class="v">${esc(lead.name)}</div><div class="d num">${lead.total} pts${second ? ", " + (lead.total - second.total) + " clear of " + esc(second.name) : ""}</div></div>`, ms, all, attendance, mostWins)}
         <div class="sec-head">
           <div><h2>Silverware Challenge ${esc(data.season)}</h2>${subTabs()}<p class="sub"><b>Points.</b> 20 points for the ${weighed() ? "heaviest bag" : "winner"}, one less for each place behind${weighed() ? " (equal bags share points)" : ""}. Anglers who fish but don't weigh in get 1 point.${data.silverware ? " Only Silverware Challenge entrants score." : ""}</p></div>
           ${ms.length > 1 ? `<label class="ctl" for="bestn">Count
@@ -526,13 +531,17 @@ td.cell .dropped { text-decoration: line-through; opacity: .5; }
 
   function renderWeight() {
     const ms = matchesSorted();
-    const rows = rank(standings().filter(r => !data.silverware || inSilver(r.name)).sort((a, b) => b.weight - a.weight || a.name.localeCompare(b.name)), "weight");
+    const all = standings();
+    const rows = rank(all.filter(r => !data.silverware || inSilver(r.name)).sort((a, b) => b.weight - a.weight || a.name.localeCompare(b.name)), "weight");
+    const lead = rows[0], second = rows[1];
+    const attendance = ms.reduce((s, m) => s + Object.keys(m.sheet || m.results).length, 0);
     const fish = allFish();
     const flatCount = {};
     ms.forEach(m => Object.entries(m.sheet || {}).forEach(([n, r]) => { if (r.flats) flatCount[n] = (flatCount[n] || 0) + r.flats; }));
     const flats = rank(Object.entries(flatCount).map(([name, count]) => ({ name, count })).sort((a, b) => b.count - a.count || a.name.localeCompare(b.name)), "count");
     return `
       <section class="view">
+        ${statStrip(`<div class="stat lead"><div class="k">Weight leader</div><div class="v">${esc(lead.name)}</div><div class="d num">${lbOz(lead.weight)}${second ? ", " + lbOz(lead.weight - second.weight) + " clear of " + esc(second.name) : ""}</div></div>`, ms, all, attendance, null)}
         <div class="sec-head"><div><h2>Silverware Challenge ${esc(data.season)}</h2>${subTabs()}<p class="sub"><b>Weight.</b> Every bag weight added up across the season.${data.silverware ? " Only Silverware Challenge entrants count." : ""}</p></div></div>
         <div class="tbl-wrap">
           <table>

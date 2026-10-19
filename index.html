@@ -504,6 +504,9 @@ td.cell .dropped { text-decoration: line-through; opacity: .5; }
     const ms = matchesSorted();
     const rows = rank(standings().sort((a, b) => b.weight - a.weight || a.name.localeCompare(b.name)), "weight");
     const fish = allFish();
+    const flatCount = {};
+    ms.forEach(m => Object.entries(m.sheet || {}).forEach(([n, r]) => { if (r.flats) flatCount[n] = (flatCount[n] || 0) + r.flats; }));
+    const flats = rank(Object.entries(flatCount).map(([name, count]) => ({ name, count })).sort((a, b) => b.count - a.count || a.name.localeCompare(b.name)), "count");
     return `
       <section class="view">
         <div class="sec-head"><div><h2>Weight Championship ${esc(data.season)}</h2><p class="sub">Every bag weight added up across the season.</p></div></div>
@@ -524,6 +527,10 @@ td.cell .dropped { text-decoration: line-through; opacity: .5; }
           <h3>Biggest fish of the season</h3>
           ${fish.length ? `<ol class="result-list">${fish.slice(0, 10).map((f, i) => `<li><span class="p num">${ord(fish.findIndex(x => x.oz === f.oz) + 1)}</span><span><button class="linkbtn" data-angler="${esc(f.name)}">${esc(f.name)}</button> <span class="meta">${esc(fishName(f))}, match ${f.no}</span></span><span class="pts">${lbOz(f.oz)}</span></li>`).join("")}</ol>` : `<p class="sub">No fish weighed yet.</p>`}
         </div>
+        ${flats.length ? `<div class="panel">
+          <h3>Flatfish caught</h3>
+          <ol class="result-list">${flats.map(f => `<li><span class="p num">${ord(f.pos)}</span><button class="linkbtn" data-angler="${esc(f.name)}">${esc(f.name)}</button><span class="pts">${f.count}</span></li>`).join("")}</ol>
+        </div>` : ""}
       </section>`;
   }
 
@@ -534,14 +541,14 @@ td.cell .dropped { text-decoration: line-through; opacity: .5; }
     const rows = cc.entrants.map(name => {
       const mine = cods.filter(f => f.name === name);
       return { name, best: mine.length ? mine[0].oz : 0, total: mine.reduce((s, f) => s + f.oz, 0), count: mine.length };
-    }).sort((a, b) => b.best - a.best || b.total - a.total || a.name.localeCompare(b.name));
+    }).sort((a, b) => b.count - a.count || b.total - a.total || a.name.localeCompare(b.name));
     const anyCod = rows.some(r => r.count);
-    rows.forEach((r, i) => { r.pos = r.count ? (i > 0 && rows[i - 1].best === r.best ? rows[i - 1].pos : i + 1) : null; });
+    rows.forEach((r, i) => { r.pos = r.count ? (i > 0 && rows[i - 1].count === r.count && rows[i - 1].total === r.total ? rows[i - 1].pos : i + 1) : null; });
     const outside = cods.filter(f => !entered.has(f.name));
     return `
       <section class="view">
         <div class="strip">
-          <div class="stat lead"><div class="k">Cod Challenge leader</div><div class="v">${anyCod ? esc(rows[0].name) : "Still open"}</div><div class="d">${anyCod ? lbOz(rows[0].best) + " cod" : "No entrant has weighed a cod yet"}</div></div>
+          <div class="stat lead"><div class="k">Cod Challenge leader</div><div class="v">${anyCod ? esc(rows[0].name) : "Still open"}</div><div class="d">${anyCod ? rows[0].count + " cod, " + lbOz(rows[0].total) + " in total" : "No entrant has weighed a cod yet"}</div></div>
           <div class="stat"><div class="k">Entrants</div><div class="v num">${cc.entrants.length}</div><div class="d num">£${cc.fee} entry · £${cc.fee * cc.entrants.length} in the pot</div></div>
           <div class="stat"><div class="k">Cod weighed</div><div class="v num">${cods.length}</div><div class="d">across ${data.matches.length} match${data.matches.length === 1 ? "" : "es"}</div></div>
         </div>
@@ -549,11 +556,11 @@ td.cell .dropped { text-decoration: line-through; opacity: .5; }
         ${outside.length ? `<div class="note">${outside.map(f => `${esc(f.name)} weighed a ${lbOz(f.oz)} cod in match ${f.no} but isn't on the Cod Challenge entry list, so it doesn't count.`).join(" ")}</div>` : ""}
         <div class="tbl-wrap">
           <table>
-            <thead><tr><th class="sticky">Pos</th><th class="sticky2" style="text-align:left">Entrant</th><th>Heaviest cod</th><th>Cod caught</th><th>Total cod weight</th></tr></thead>
+            <thead><tr><th class="sticky">Pos</th><th class="sticky2" style="text-align:left">Entrant</th><th>Cod caught</th><th>Total cod weight</th><th>Heaviest cod</th></tr></thead>
             <tbody>${rows.map(r => `
               <tr class="${r.pos && r.pos <= 3 ? "top3" : ""}">
                 <td class="pos sticky num">${r.pos || "–"}</td>${nameCell(r.name)}
-                <td class="total num">${lbOz(r.best)}</td><td class="num">${r.count || "–"}</td><td class="num">${lbOz(r.total)}</td>
+                <td class="total num">${r.count || "–"}</td><td class="num">${lbOz(r.total)}</td><td class="num">${lbOz(r.best)}</td>
               </tr>`).join("")}</tbody>
           </table>
         </div>
@@ -575,7 +582,7 @@ td.cell .dropped { text-decoration: line-through; opacity: .5; }
             ${x.date || x.venue ? `<div class="meta">${esc([fmtDate(x.date), x.venue].filter(Boolean).join(" · "))}</div>` : ""}
             <ol class="podium">${pl.slice(0, 3).map(r => `<li><span>${esc(r.name)}</span><span class="num">${r.row ? lbOz(r.row.bag) : r.pts}</span></li>`).join("")}</ol>
             ${big.length ? `<div class="meta">Biggest fish: ${lbOz(big[0].oz)}, ${esc(andList(big.filter(f => f.oz === big[0].oz).map(f => f.name)))}</div>` : ""}
-            ${checks.length ? `<div class="chips">${x.sheet ? `<span class="chip">${checks.length} thing${checks.length === 1 ? "" : "s"} to check</span>` : checks.map(c => `<span class="chip">${esc(c.t)}</span>`).join("")}</div>` : ""}
+            ${checks.length ? `<div class="chips">${x.sheet ? `<span class="chip info">${checks.length} note${checks.length === 1 ? "" : "s"}</span>` : checks.map(c => `<span class="chip">${esc(c.t)}</span>`).join("")}</div>` : ""}
           </button>`;
         }).join("")}</div>
       </section>`;
@@ -586,7 +593,7 @@ td.cell .dropped { text-decoration: line-through; opacity: .5; }
     return `<div class="panel" id="match-panel">
       <div class="sec-head"><div><h3>Match ${m.no}</h3><p class="sub">${esc([fmtDate(m.date), m.venue].filter(Boolean).join(" · ") || "Date and venue not recorded yet")}</p></div>
       <button class="btn" data-close>Close</button></div>
-      ${notes.length ? `<div class="note"><b>To check with the match secretary</b><ul>${notes.map(c => `<li>${esc(c.t)}</li>`).join("")}</ul></div>` : ""}
+      ${notes.length ? `<div class="note"><b>Notes from the match sheet</b><ul>${notes.map(c => `<li>${esc(c.t)}</li>`).join("")}</ul></div>` : ""}
       ${chips.length ? `<div class="chips">${chips.map(c => `<span class="chip${c.w ? "" : " info"}">${esc(c.t)}</span>`).join("")}</div>` : ""}
       ${m.sheet ? `
       <div class="tbl-wrap"><table>

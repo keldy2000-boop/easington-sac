@@ -188,6 +188,12 @@ td.cell .dropped { text-decoration: line-through; opacity: .5; }
 .empty { color: var(--muted); padding: 30px 0; text-align: center; }
 @media (prefers-reduced-motion: no-preference) { .mcard, .btn, .tab { transition: border-color .15s, color .15s, background .15s; } }
 
+/* Season picker on the navy masthead */
+.season-pick { display: inline-flex; align-items: center; gap: 8px; margin: 8px 12px 0 0; color: #b9c3ce; font-size: 15px; text-shadow: none; }
+.season-pick select { background: var(--fabric-2); color: #f2f4f7; border: 1px solid #4a5665; border-radius: 99px; padding: 6px 12px; color-scheme: dark; }
+.note ul { margin: 6px 0 0; padding-left: 20px; display: grid; gap: 4px; }
+.panel .tbl-wrap td.name { white-space: normal; }
+
 /* Add to Home Screen */
 .install { display: inline-flex; align-items: center; gap: 8px; margin-top: 10px; background: #e6c740; color: #1b222a; border: 0; border-radius: 99px;
   padding: 8px 16px 8px 10px; font-family: var(--font-display); font-weight: 700; font-size: 17px; letter-spacing: .03em; cursor: pointer; text-shadow: none; }
@@ -269,11 +275,14 @@ td.cell .dropped { text-decoration: line-through; opacity: .5; }
       <div class="eyebrow" id="season-line">Points Championship</div>
       <h1>Easington Sea Angling Club</h1>
       <p id="mast-sub">Club league, match results and angler records</p>
+      <label class="season-pick" id="season-pick" for="season" hidden>Season <select id="season"></select></label>
       <button class="install" id="install" type="button" hidden><img src="icon-192.png" alt=""><span id="install-label">Add to Home Screen</span></button>
     </div>
   </div>
   <nav class="tabs" role="tablist" aria-label="Sections">
-    <button class="tab" role="tab" id="tab-table" data-view="table" aria-selected="true">League table</button>
+    <button class="tab" role="tab" id="tab-table" data-view="table" aria-selected="true">Points</button>
+    <button class="tab" role="tab" id="tab-weight" data-view="weight" aria-selected="false" hidden>Weight</button>
+    <button class="tab" role="tab" id="tab-cod" data-view="cod" aria-selected="false" hidden>Cod Challenge</button>
     <button class="tab" role="tab" id="tab-matches" data-view="matches" aria-selected="false">Matches</button>
     <button class="tab" role="tab" id="tab-anglers" data-view="anglers" aria-selected="false">Anglers</button>
   </nav>
@@ -294,10 +303,42 @@ td.cell .dropped { text-decoration: line-through; opacity: .5; }
 (function () {
   const $ = (s, el = document) => el.querySelector(s);
   const esc = s => String(s).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
-  let data = null, view = "table", bestN = 0, openMatch = null, angler = null, filter = "";
+  let data = null, seasons = null, seasonId = null, view = "table", bestN = 0, openMatch = null, angler = null, filter = "";
+  const VIEWS = ["table", "weight", "cod", "matches", "anglers"];
 
   try { const v = localStorage.getItem("esac-view"); if (v) view = v; } catch (e) {}
-  if (/^#(table|matches|anglers)$/.test(location.hash)) view = location.hash.slice(1);
+  if (/^#(table|weight|cod|matches|anglers)$/.test(location.hash)) view = location.hash.slice(1);
+
+  // ---------- weights ----------
+  const lbOz = oz => oz == null || oz <= 0 ? "–" : oz < 16 ? oz + "oz" : Math.floor(oz / 16) + "lb " + (oz % 16) + "oz";
+  const fishName = f => f.species ? f.species.toLowerCase() : "fish";
+  const fishText = f => lbOz(f.oz) + " " + fishName(f);
+  const weighed = () => data && data.scoring === "weights";
+  const andList = a => a.length < 2 ? a.join("") : a.slice(0, -1).join(", ") + " and " + a.at(-1);
+
+  // A weighed match keeps its sheet in m.sheet; points are worked out from bag weight.
+  function normalise(d) {
+    d.matches.forEach(m => {
+      if (d.scoring !== "weights") return;
+      m.sheet = m.results;
+      const ranked = Object.entries(m.sheet).filter(([, r]) => r.bag > 0).sort((a, b) => b[1].bag - a[1].bag);
+      const pts = {};
+      let p = 20;
+      ranked.forEach(([n, r], i) => {
+        if (i > 0 && r.bag < ranked[i - 1][1].bag) p = Math.max(p - 1, 2);
+        pts[n] = p;
+      });
+      Object.entries(m.sheet).forEach(([n, r]) => { if (!(r.bag > 0)) pts[n] = 1; });
+      m.results = pts;
+    });
+    return d;
+  }
+  function allFish() {
+    const out = [];
+    matchesSorted().forEach(m => m.sheet && Object.entries(m.sheet).forEach(([name, r]) => (r.fish || []).forEach(f => out.push({ ...f, name, no: m.no }))));
+    return out.sort((a, b) => b.oz - a.oz);
+  }
+  function bigOf(r) { return (r.fish || []).reduce((b, f) => !b || f.oz > b.oz ? f : b, null); }
 
   // ---------- scoring ----------
   function matchesSorted() { return [...data.matches].sort((a, b) => a.no - b.no); }
@@ -314,21 +355,28 @@ td.cell .dropped { text-decoration: line-through; opacity: .5; }
       }
       const total = pts.reduce((s, p, i) => s + (counted[i] ? p : 0), 0);
       const wins = ms.filter(m => (m.results[name] || 0) > 0 && m.results[name] === Math.max(...Object.values(m.results))).length;
-      return { name, pts, counted, total, fished, wins };
+      const bags = ms.map(m => m.sheet && m.sheet[name] ? m.sheet[name].bag || 0 : 0);
+      const weight = bags.reduce((a, b) => a + b, 0);
+      const best = bags.length ? Math.max(...bags) : 0;
+      const big = ms.map(m => m.sheet && m.sheet[name] ? bigOf(m.sheet[name]) : null).reduce((b, f) => f && (!b || f.oz > b.oz) ? f : b, null);
+      return { name, pts, counted, total, fished, wins, bags, weight, best, big };
     });
     rows.sort((a, b) => b.total - a.total || b.wins - a.wins || a.name.localeCompare(b.name));
-    rows.forEach((r, i) => {
-      r.pos = i > 0 && rows[i - 1].total === r.total ? rows[i - 1].pos : i + 1;
-    });
+    rank(rows, "total");
+    return rows;
+  }
+  function rank(rows, key) {
+    rows.forEach((r, i) => { r.pos = i > 0 && rows[i - 1][key] === r[key] ? rows[i - 1].pos : i + 1; });
     rows.forEach(r => r.joint = rows.filter(o => o.pos === r.pos).length > 1);
     return rows;
   }
   function placeOf(m) { // finishing order with shared places for equal points
-    const list = Object.entries(m.results).sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]));
-    return list.map(([n, p], i) => ({ name: n, pts: p, place: list.findIndex(x => x[1] === p) + 1 }));
+    const list = Object.entries(m.results).sort((a, b) => b[1] - a[1] || (m.sheet ? (m.sheet[b[0]].bag || 0) - (m.sheet[a[0]].bag || 0) : 0) || a[0].localeCompare(b[0]));
+    return list.map(([n, p]) => ({ name: n, pts: p, place: list.findIndex(x => x[1] === p) + 1, row: m.sheet ? m.sheet[n] : null }));
   }
   function matchChecks(m) {
-    const out = [];
+    const out = (m.notes || []).map(t => ({ t, w: true, long: true }));
+    if (m.sheet) return out;
     const pts = Object.values(m.results).sort((a, b) => b - a);
     const n = pts.length;
     if (n && pts[0] !== 20) out.push({ t: "Winner scored " + pts[0] + ", not 20", w: true });
@@ -364,6 +412,8 @@ td.cell .dropped { text-decoration: line-through; opacity: .5; }
   }
   const fmtDate = d => d ? new Date(d + "T12:00:00").toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" }) : "";
   const ord = n => n + (n % 100 >= 11 && n % 100 <= 13 ? "th" : ({ 1: "st", 2: "nd", 3: "rd" }[n % 10] || "th"));
+  const posCell = r => `<td class="pos sticky num">${r.joint ? "=" : ""}${r.pos}</td>`;
+  const nameCell = n => `<td class="name sticky2"><button class="linkbtn" data-angler="${esc(n)}">${esc(n)}</button></td>`;
 
   // ---------- views ----------
   function renderTable() {
@@ -372,27 +422,31 @@ td.cell .dropped { text-decoration: line-through; opacity: .5; }
     const nOpts = [0]; for (let k = ms.length - 1; k >= Math.max(1, ms.length - 4); k--) nOpts.push(k);
     const attendance = ms.reduce((s, m) => s + Object.keys(m.results).length, 0);
     const mostWins = [...rows].sort((a, b) => b.wins - a.wins)[0];
+    const fish = weighed() ? allFish() : [];
+    const heavy = weighed() ? [...rows].sort((a, b) => b.best - a.best)[0] : null;
     return `
       <section class="view">
         <div class="strip">
           <div class="stat lead"><div class="k">Leader</div><div class="v">${esc(lead.name)}</div><div class="d num">${lead.total} pts${second ? ", " + (lead.total - second.total) + " clear of " + esc(second.name) : ""}</div></div>
-          <div class="stat"><div class="k">Matches fished</div><div class="v num">${ms.length}</div><div class="d">${data.season} season</div></div>
-          <div class="stat"><div class="k">Anglers entered</div><div class="v num">${rows.length}</div><div class="d num">${(attendance / ms.length).toFixed(1)} per match on average</div></div>
-          <div class="stat"><div class="k">Most match wins</div><div class="v">${esc(mostWins.name)}</div><div class="d num">${mostWins.wins} win${mostWins.wins === 1 ? "" : "s"}</div></div>
+          ${weighed() ? `
+          <div class="stat"><div class="k">Heaviest bag</div><div class="v num">${lbOz(heavy.best)}</div><div class="d">${esc(heavy.name)}</div></div>
+          <div class="stat"><div class="k">Biggest fish</div><div class="v num">${fish[0] ? lbOz(fish[0].oz) : "–"}</div><div class="d">${fish[0] ? esc(andList(fish.filter(f => f.oz === fish[0].oz).map(f => f.name + (f.species ? " (" + fishName(f) + ")" : "")))) : "None weighed yet"}</div></div>` : `
+          <div class="stat"><div class="k">Matches fished</div><div class="v num">${ms.length}</div><div class="d">${esc(data.season)} season</div></div>
+          <div class="stat"><div class="k">Most match wins</div><div class="v">${esc(mostWins.name)}</div><div class="d num">${mostWins.wins} win${mostWins.wins === 1 ? "" : "s"}</div></div>`}
+          <div class="stat"><div class="k">Anglers fished</div><div class="v num">${rows.length}</div><div class="d num">${(attendance / ms.length).toFixed(1)} per match on average</div></div>
         </div>
         <div class="sec-head">
-          <div><h2>Points Championship ${esc(data.season)}</h2><p class="sub">20 points for a win, one less for each place behind. Anglers who fish but don't weigh in get 1 point.</p></div>
-          <label class="ctl" for="bestn">Count
+          <div><h2>Points Championship ${esc(data.season)}</h2><p class="sub">20 points for the ${weighed() ? "heaviest bag" : "winner"}, one less for each place behind${weighed() ? " (equal bags share points)" : ""}. Anglers who fish but don't weigh in get 1 point.</p></div>
+          ${ms.length > 1 ? `<label class="ctl" for="bestn">Count
             <select id="bestn">${nOpts.map(k => `<option value="${k}"${k === bestN ? " selected" : ""}>${k ? "Best " + k + " of " + ms.length : "Every match"}</option>`).join("")}</select>
-          </label>
+          </label>` : ""}
         </div>
         <div class="tbl-wrap">
           <table>
             <thead><tr><th class="sticky">Pos</th><th class="sticky2" style="text-align:left">Angler</th>${ms.map(m => `<th title="Match ${m.no}">M${m.no}</th>`).join("")}<th>Fished</th><th>Wins</th><th>Total</th></tr></thead>
             <tbody>${rows.map(r => `
               <tr class="${r.pos <= 3 ? "top3" : ""}">
-                <td class="pos sticky num">${r.joint ? "=" : ""}${r.pos}</td>
-                <td class="name sticky2"><button class="linkbtn" data-angler="${esc(r.name)}">${esc(r.name)}</button></td>
+                ${posCell(r)}${nameCell(r.name)}
                 ${r.pts.map((p, i) => {
                   if (!p) return `<td class="cell"><span class="zero">·</span></td>`;
                   const isWin = p === Math.max(...Object.values(ms[i].results));
@@ -407,31 +461,105 @@ td.cell .dropped { text-decoration: line-through; opacity: .5; }
       </section>`;
   }
 
+  function renderWeight() {
+    const ms = matchesSorted();
+    const rows = rank(standings().sort((a, b) => b.weight - a.weight || a.name.localeCompare(b.name)), "weight");
+    const fish = allFish();
+    return `
+      <section class="view">
+        <div class="sec-head"><div><h2>Weight Championship ${esc(data.season)}</h2><p class="sub">Every bag weight added up across the season.</p></div></div>
+        <div class="tbl-wrap">
+          <table>
+            <thead><tr><th class="sticky">Pos</th><th class="sticky2" style="text-align:left">Angler</th>${ms.map(m => `<th>M${m.no}</th>`).join("")}<th>Best bag</th><th>Biggest fish</th><th>Total</th></tr></thead>
+            <tbody>${rows.map(r => `
+              <tr class="${r.pos <= 3 ? "top3" : ""}">
+                ${posCell(r)}${nameCell(r.name)}
+                ${r.bags.map((b, i) => `<td class="num">${ms[i].results[r.name] ? lbOz(b) : `<span class="zero">·</span>`}</td>`).join("")}
+                <td class="num">${lbOz(r.best)}</td>
+                <td class="num">${r.big ? esc(fishText(r.big)) : ""}</td>
+                <td class="total num">${lbOz(r.weight)}</td>
+              </tr>`).join("")}</tbody>
+          </table>
+        </div>
+        <div class="panel">
+          <h3>Biggest fish of the season</h3>
+          ${fish.length ? `<ol class="result-list">${fish.slice(0, 10).map((f, i) => `<li><span class="p num">${ord(fish.findIndex(x => x.oz === f.oz) + 1)}</span><span><button class="linkbtn" data-angler="${esc(f.name)}">${esc(f.name)}</button> <span class="meta">${esc(fishName(f))}, match ${f.no}</span></span><span class="pts">${lbOz(f.oz)}</span></li>`).join("")}</ol>` : `<p class="sub">No fish weighed yet.</p>`}
+        </div>
+      </section>`;
+  }
+
+  function renderCod() {
+    const cc = data.codChallenge || { entrants: [] };
+    const cods = allFish().filter(f => /cod/i.test(f.species));
+    const entered = new Set(cc.entrants);
+    const rows = cc.entrants.map(name => {
+      const mine = cods.filter(f => f.name === name);
+      return { name, best: mine.length ? mine[0].oz : 0, total: mine.reduce((s, f) => s + f.oz, 0), count: mine.length };
+    }).sort((a, b) => b.best - a.best || b.total - a.total || a.name.localeCompare(b.name));
+    const anyCod = rows.some(r => r.count);
+    rows.forEach((r, i) => { r.pos = r.count ? (i > 0 && rows[i - 1].best === r.best ? rows[i - 1].pos : i + 1) : null; });
+    const outside = cods.filter(f => !entered.has(f.name));
+    return `
+      <section class="view">
+        <div class="strip">
+          <div class="stat lead"><div class="k">Cod Challenge leader</div><div class="v">${anyCod ? esc(rows[0].name) : "Still open"}</div><div class="d">${anyCod ? lbOz(rows[0].best) + " cod" : "No entrant has weighed a cod yet"}</div></div>
+          <div class="stat"><div class="k">Entrants</div><div class="v num">${cc.entrants.length}</div><div class="d num">£${cc.fee} entry · £${cc.fee * cc.entrants.length} in the pot</div></div>
+          <div class="stat"><div class="k">Cod weighed</div><div class="v num">${cods.length}</div><div class="d">across ${data.matches.length} match${data.matches.length === 1 ? "" : "es"}</div></div>
+        </div>
+        <div class="sec-head"><div><h2>Cod Challenge ${esc(data.season)}</h2><p class="sub">${esc(cc.rule || "")}</p></div></div>
+        ${outside.length ? `<div class="note">${outside.map(f => `${esc(f.name)} weighed a ${lbOz(f.oz)} cod in match ${f.no} but isn't on the Cod Challenge entry list, so it doesn't count.`).join(" ")}</div>` : ""}
+        <div class="tbl-wrap">
+          <table>
+            <thead><tr><th class="sticky">Pos</th><th class="sticky2" style="text-align:left">Entrant</th><th>Heaviest cod</th><th>Cod caught</th><th>Total cod weight</th></tr></thead>
+            <tbody>${rows.map(r => `
+              <tr class="${r.pos && r.pos <= 3 ? "top3" : ""}">
+                <td class="pos sticky num">${r.pos || "–"}</td>${nameCell(r.name)}
+                <td class="total num">${lbOz(r.best)}</td><td class="num">${r.count || "–"}</td><td class="num">${lbOz(r.total)}</td>
+              </tr>`).join("")}</tbody>
+          </table>
+        </div>
+      </section>`;
+  }
+
   function renderMatches() {
     const ms = matchesSorted().reverse();
     const m = openMatch != null ? data.matches.find(x => x.no === openMatch) : null;
     return `
       <section class="view">
-        <div class="sec-head"><div><h2>Match results</h2><p class="sub">Tap a match to see the full result. Flags point out scoring that doesn't follow the usual pattern.</p></div></div>
+        <div class="sec-head"><div><h2>Match results</h2><p class="sub">Tap a match to see the full result.${weighed() ? "" : " Flags point out scoring that doesn't follow the usual pattern."}</p></div></div>
         ${m ? matchPanel(m) : ""}
         <div class="cards">${ms.map(x => {
           const pl = placeOf(x), checks = matchChecks(x).filter(c => c.w);
+          const big = x.sheet ? Object.entries(x.sheet).flatMap(([n, r]) => (r.fish || []).map(f => ({ ...f, name: n }))).sort((a, b) => b.oz - a.oz) : [];
           return `<button class="mcard" data-match="${x.no}" aria-pressed="${x.no === openMatch}">
             <h3>Match ${x.no} <small class="num">${pl.length} fished</small></h3>
             ${x.date || x.venue ? `<div class="meta">${esc([fmtDate(x.date), x.venue].filter(Boolean).join(" · "))}</div>` : ""}
-            <ol class="podium">${pl.slice(0, 3).map(r => `<li><span>${esc(r.name)}</span><span class="num">${r.pts}</span></li>`).join("")}</ol>
-            ${checks.length ? `<div class="chips">${checks.map(c => `<span class="chip">${esc(c.t)}</span>`).join("")}</div>` : ""}
+            <ol class="podium">${pl.slice(0, 3).map(r => `<li><span>${esc(r.name)}</span><span class="num">${r.row ? lbOz(r.row.bag) : r.pts}</span></li>`).join("")}</ol>
+            ${big.length ? `<div class="meta">Biggest fish: ${lbOz(big[0].oz)}, ${esc(andList(big.filter(f => f.oz === big[0].oz).map(f => f.name)))}</div>` : ""}
+            ${checks.length ? `<div class="chips">${x.sheet ? `<span class="chip">${checks.length} thing${checks.length === 1 ? "" : "s"} to check</span>` : checks.map(c => `<span class="chip">${esc(c.t)}</span>`).join("")}</div>` : ""}
           </button>`;
         }).join("")}</div>
       </section>`;
   }
   function matchPanel(m) {
     const pl = placeOf(m), checks = matchChecks(m);
+    const notes = checks.filter(c => c.long), chips = checks.filter(c => !c.long);
     return `<div class="panel" id="match-panel">
       <div class="sec-head"><div><h3>Match ${m.no}</h3><p class="sub">${esc([fmtDate(m.date), m.venue].filter(Boolean).join(" · ") || "Date and venue not recorded yet")}</p></div>
       <button class="btn" data-close>Close</button></div>
-      ${checks.length ? `<div class="chips">${checks.map(c => `<span class="chip${c.w ? "" : " info"}">${esc(c.t)}</span>`).join("")}</div>` : ""}
-      <ol class="result-list">${pl.map(r => `<li><span class="p num">${r.pts > 1 ? ord(r.place) : "–"}</span><button class="linkbtn" data-angler="${esc(r.name)}">${esc(r.name)}</button><span class="pts">${r.pts}</span></li>`).join("")}</ol>
+      ${notes.length ? `<div class="note"><b>To check with the match secretary</b><ul>${notes.map(c => `<li>${esc(c.t)}</li>`).join("")}</ul></div>` : ""}
+      ${chips.length ? `<div class="chips">${chips.map(c => `<span class="chip${c.w ? "" : " info"}">${esc(c.t)}</span>`).join("")}</div>` : ""}
+      ${m.sheet ? `
+      <div class="tbl-wrap"><table>
+        <thead><tr><th>Pos</th><th style="text-align:left">Angler</th><th>Bag</th><th style="text-align:left">Biggest fish</th><th>Pts</th></tr></thead>
+        <tbody>${pl.map(r => `<tr>
+          <td class="pos num">${r.pts > 1 ? ord(r.place) : "–"}</td>
+          <td class="name"><button class="linkbtn" data-angler="${esc(r.name)}">${esc(r.name)}</button></td>
+          <td class="num">${r.row.bag > 0 ? lbOz(r.row.bag) : "No weigh-in"}</td>
+          <td style="text-align:left">${esc([...(r.row.fish || []).map(fishText), r.row.flats ? r.row.flats + " flat" + (r.row.flats > 1 ? "s" : "") : ""].filter(Boolean).join(", "))}</td>
+          <td class="total num">${r.pts}</td></tr>`).join("")}</tbody>
+      </table></div>` : `
+      <ol class="result-list">${pl.map(r => `<li><span class="p num">${r.pts > 1 ? ord(r.place) : "–"}</span><button class="linkbtn" data-angler="${esc(r.name)}">${esc(r.name)}</button><span class="pts">${r.pts}</span></li>`).join("")}</ol>`}
     </div>`;
   }
 
@@ -455,14 +583,18 @@ td.cell .dropped { text-decoration: line-through; opacity: .5; }
             <ul>${shown.map(x => `<li><button data-angler="${esc(x.name)}" aria-current="${x.name === angler}"><span>${esc(x.name)}</span><span class="num">${x.total}</span></button></li>`).join("") || `<li class="empty">No angler matches “${esc(filter)}”.</li>`}</ul>
           </div>
           <div class="panel">
-            <div><div class="eyebrow" style="color: var(--cod)">${r.joint ? "Joint " : ""}${ord(r.pos)} in the league</div><h3>${esc(r.name)}</h3></div>
+            <div><div class="eyebrow" style="color: var(--cod)">${r.joint ? "Joint " : ""}${ord(r.pos)} in the points</div><h3>${esc(r.name)}</h3></div>
             ${dupes.length ? `<div class="note">${dupes.map(([a, b]) => `${esc(a)} and ${esc(b)} might be the same person.`).join(" ")} Check with the match secretary before merging their points.</div>` : ""}
             <div class="prof-stats">
               <div><div class="v num">${r.total}</div><div class="k">Points</div></div>
               <div><div class="v num">${r.fished}/${ms.length}</div><div class="k">Matches fished</div></div>
               <div><div class="v num">${r.wins}</div><div class="k">Wins</div></div>
+              ${weighed() ? `
+              <div><div class="v num">${lbOz(r.weight)}</div><div class="k">Total weight</div></div>
+              <div><div class="v num">${lbOz(r.best)}</div><div class="k">Best bag</div></div>
+              <div><div class="v num">${r.big ? lbOz(r.big.oz) : "–"}</div><div class="k">Biggest fish${r.big && r.big.species ? " (" + esc(fishName(r.big)) + ")" : ""}</div></div>` : `
               <div><div class="v num">${podiums}</div><div class="k">Top 3 finishes</div></div>
-              <div><div class="v num">${avg}</div><div class="k">Avg per match</div></div>
+              <div><div class="v num">${avg}</div><div class="k">Avg per match</div></div>`}
             </div>
             <div class="chart">${chart(r, ms)}</div>
           </div>
@@ -471,7 +603,7 @@ td.cell .dropped { text-decoration: line-through; opacity: .5; }
   }
   function chart(r, ms) {
     const W = 640, H = 220, L = 34, B = 30, T = 12, R = 8;
-    const bw = (W - L - R) / ms.length, y = v => T + (H - T - B) * (1 - v / 20);
+    const bw = (W - L - R) / Math.max(ms.length, 6), y = v => T + (H - T - B) * (1 - v / 20);
     let s = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Points per match for ${esc(r.name)}">`;
     [0, 5, 10, 15, 20].forEach(v => {
       s += `<line x1="${L}" x2="${W - R}" y1="${y(v)}" y2="${y(v)}" stroke="var(--line)" stroke-width="1"/>`;
@@ -510,14 +642,18 @@ td.cell .dropped { text-decoration: line-through; opacity: .5; }
 
   // ---------- shell ----------
   function renderHeader() {
-    $("#season-line").textContent = "Points Championship " + data.season;
+    $("#season-line").textContent = "Season " + data.season;
     const n = data.matches.length;
     $("#mast-sub").textContent = n + " match" + (n === 1 ? "" : "es") + " fished · last updated " + fmtDate(data.updated);
+    const pick = $("#season");
+    pick.innerHTML = seasons.seasons.map(s => `<option value="${esc(s.id)}"${s.id === seasonId ? " selected" : ""}>${esc(s.label)}${s.id === seasons.current ? " (this season)" : ""}</option>`).join("");
+    $("#season-pick").hidden = seasons.seasons.length < 2;
+    $("#tab-weight").hidden = $("#tab-cod").hidden = !weighed();
   }
   function render() {
-    if (!["table", "matches", "anglers"].includes(view)) view = "table";
+    if (!VIEWS.includes(view) || (!weighed() && (view === "weight" || view === "cod"))) view = "table";
     document.querySelectorAll(".tab").forEach(t => t.setAttribute("aria-selected", String(t.dataset.view === view)));
-    const html = { table: renderTable, matches: renderMatches, anglers: renderAnglers }[view]();
+    const html = { table: renderTable, weight: renderWeight, cod: renderCod, matches: renderMatches, anglers: renderAnglers }[view]();
     $("#main").innerHTML = html;
   }
   function go(v) { view = v; try { localStorage.setItem("esac-view", v); } catch (e) {} render(); }
@@ -531,6 +667,7 @@ td.cell .dropped { text-decoration: line-through; opacity: .5; }
   });
   document.addEventListener("change", e => {
     if (e.target.id === "bestn") { bestN = Number(e.target.value); render(); }
+    if (e.target.id === "season") loadSeason(e.target.value);
   });
   document.addEventListener("input", e => {
     if (e.target.id === "afilter") {
@@ -539,8 +676,16 @@ td.cell .dropped { text-decoration: line-through; opacity: .5; }
     }
   });
 
-  fetch("data/league.json", { cache: "no-store" }).then(r => { if (!r.ok) throw new Error(r.status); return r.json(); })
-    .then(d => { data = d; renderHeader(); render(); })
+  const getJSON = url => fetch(url, { cache: "no-store" }).then(r => { if (!r.ok) throw new Error(r.status); return r.json(); });
+  function loadSeason(id) {
+    const s = seasons.seasons.find(x => x.id === id) || seasons.seasons[0];
+    $("#main").innerHTML = `<p class="empty">Loading ${esc(s.label)}…</p>`;
+    return getJSON(s.file).then(d => {
+      data = normalise(d); seasonId = s.id; bestN = 0; openMatch = null; angler = null; filter = "";
+      renderHeader(); render();
+    }).catch(() => { $("#main").innerHTML = `<p class="empty">The results for ${esc(s.label)} didn't load. Refresh the page to try again.</p>`; });
+  }
+  getJSON("data/seasons.json").then(s => { seasons = s; return loadSeason(s.current); })
     .catch(() => { $("#main").innerHTML = `<p class="empty">The results file didn't load. Refresh the page to try again.</p>`; });
 
   // ---------- app install / Add to Home Screen ----------

@@ -4,20 +4,23 @@ The club's Points Championship website: league table, match results and angler r
 
 ## Updating results
 
-All results live in [`data/league.json`](data/league.json). To add a match, add an entry to `matches`:
+Each season has its own file in `data/` (listed in `data/seasons.json`). The current season, 2026/27, records bag weights in ounces and works out points automatically. To add a match to `data/2026-27.json`, add an entry to `matches`:
 
 ```json
 {
-  "no": 11,
-  "date": "2026-10-19",
-  "venue": "Easington beach",
-  "results": { "J Critchley": 20, "J Evans": 19, "M Brown": 1 }
+  "no": 2,
+  "date": "2026-10-25",
+  "venue": "",
+  "results": {
+    "Chris Fisher": { "bag": 317, "fish": [{ "species": "Cod", "oz": 28 }] },
+    "John Clark":   { "bag": 0 }
+  }
 }
 ```
 
-- Points: 20 for the winner, one less for each place behind.
-- Anglers who fish but don't weigh in get 1 point.
-- Leave out anyone who didn't fish.
+- Weights are in ounces: 19lb 13oz = 19 × 16 + 13 = 317.
+- `"bag": 0` means fished but didn't weigh in (1 point). Leave out anyone who didn't fish.
+- Points, the Weight Championship and the Cod Challenge are all worked out by the app.
 - Spell names exactly as they already appear, so their points add up.
 
 Update `"updated"` to today's date, commit, and the website refreshes within a minute or two.

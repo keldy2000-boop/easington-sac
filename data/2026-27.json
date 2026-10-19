@@ -1,0 +1,47 @@
+{
+ "club": "Easington Sea Angling Club",
+ "season": "2026/27",
+ "updated": "2026-10-19",
+ "scoring": "weights",
+ "_weights": "All weights are in ounces (16oz = 1lb). Points are worked out from bag weight: 20 for the heaviest bag, 1 less for each place, equal bags share points, 1 point for fishing without weighing in.",
+ "codChallenge": {
+  "fee": 15,
+  "rule": "Rule to be confirmed: the table ranks entrants by their heaviest single cod.",
+  "entrants": ["Rich Winship", "Yukka", "Gordy Blyth", "Sue Hannam", "Glen Devine", "Louis Watt", "Craig Gawthorpe", "Mark Botterill", "Mark Andrews", "Ray White", "Mike Coulman", "Paul Huteson", "John Hinchcliffe", "Steve Smith", "Jordy Critchley", "Paul Copley", "Jim Evans", "Kenny Knott", "Sammy Knott", "Dave Tucker", "Garry Dixon", "Tony Camplin", "Matt Brown", "Steve Gibbson", "Antony Ketley", "Lock Ketley", "Mally Douglas"]
+ },
+ "silverwharf": {
+  "fee": 20,
+  "entrants": ["Rich Winship", "Yukka", "Gordy Blyth", "Sue Hannam", "Glen Devine", "Louis Watt", "Craig Gawthorpe", "Mark Botterill", "Mark Andrews", "Mark Goundrill", "Paul Huteson", "John Hinchcliffe", "Steve Smith", "Jordy Critchley", "Paul Copley", "Jim Evans", "Sammy Knott", "Kenny Knott", "Dave Tucker", "Garry Dixon", "John Clark", "Tony Camplin", "Matt Brown", "Steve Gibbson", "Antony Ketley", "Lock Ketley", "Mally Douglas"]
+ },
+ "matches": [
+  {
+   "no": 1,
+   "date": "2026-10-18",
+   "venue": "",
+   "notes": [
+    "An 8lb 2oz bag is written on the crossed-out Mark Botterill line. It isn't counted for anyone until the match secretary confirms whose it is.",
+    "John Clark has no weight on the sheet, so he's counted as fished with no weigh-in (1 point) for now.",
+    "Mark Botterill's 2lb 7oz fish has no species written.",
+    "Louis Watt's 1lb 5oz whiting is starred on the sheet."
+   ],
+   "results": {
+    "Chris Fisher":    { "bag": 317, "fish": [{ "species": "Dogfish", "oz": 36 }, { "species": "Cod", "oz": 28 }], "note": "1 cod" },
+    "Louis Watt":      { "bag": 264, "fish": [{ "species": "Whiting", "oz": 21 }], "note": "Whiting starred on sheet" },
+    "Ray White":       { "bag": 200, "fish": [{ "species": "Dogfish", "oz": 28 }] },
+    "Craig Gawthorpe": { "bag": 113, "fish": [{ "species": "Dogfish", "oz": 28 }], "flats": 1 },
+    "Riley Vickars":   { "bag": 99 },
+    "Mark Andrews":    { "bag": 89, "fish": [{ "species": "Bass", "oz": 39 }], "flats": 3 },
+    "Gordy Blyth":     { "bag": 72 },
+    "Jim Evans":       { "bag": 57 },
+    "Mark Botterill":  { "bag": 54, "fish": [{ "species": "", "oz": 39 }] },
+    "Paul Huteson":    { "bag": 46, "fish": [{ "species": "Bass", "oz": 39 }], "flats": 1 },
+    "Yukka":           { "bag": 15 },
+    "Antony Ketley":   { "bag": 14, "flats": 2 },
+    "Paul Copley":     { "bag": 8 },
+    "Jordy Critchley": { "bag": 6 },
+    "Glen Devine":     { "bag": 6 },
+    "John Clark":      { "bag": 0 }
+   }
+  }
+ ]
+}

@@ -1,7 +1,7 @@
 // Keeps the app working with a poor signal on the beach: always tries the
 // network first for fresh results, and falls back to the last copy saved.
-const CACHE = "esac-v7";
-const SHELL = ["./", "index.html", "manifest.webmanifest", "icon.svg", "icon-192.png", "icon-512.png", "apple-touch-icon.png", "data/seasons.json", "data/2026-27.json", "data/2025-26.json"];
+const CACHE = "esac-v8";
+const SHELL = ["./", "index.html", "manifest.webmanifest", "icon.svg", "icon-192.png", "icon-512.png", "apple-touch-icon.png", "data/seasons.json", "data/2026-27.json", "data/2025-26.json", "data/tides.json"];
 
 self.addEventListener("install", e => {
   e.waitUntil(caches.open(CACHE).then(c => c.addAll(SHELL)).then(() => self.skipWaiting()));

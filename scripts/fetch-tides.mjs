@@ -1,7 +1,8 @@
 // Fetches the next 7 days of high and low waters at Bridlington from the
 // Admiralty and writes them to data/tides.json.
 // Runs daily from .github/workflows/tides.yml. Needs a free UK Tidal API
-// (Discovery) key from https://admiralty.azure-api.net in ADMIRALTY_API_KEY.
+// (Discovery) key from https://developer.admiralty.co.uk in ADMIRALTY_API_KEY.
+// The free Discovery subscription lasts a year, so renew it each autumn.
 import { writeFileSync } from "node:fs";
 
 const STATION = { id: "0181", name: "Bridlington" };

@@ -2,83 +2,8 @@
  "station": "Bridlington",
  "stationId": "0181",
  "source": "UK Hydrographic Office (Admiralty)",
- "fetched": "2026-10-27T16:51:22Z",
+ "fetched": "2026-10-30T14:52:31.673Z",
  "events": [
-  {
-   "type": "HW",
-   "time": "2026-10-26T03:51:06Z",
-   "height": 6.1
-  },
-  {
-   "type": "LW",
-   "time": "2026-10-26T10:20:53Z",
-   "height": 0.9
-  },
-  {
-   "type": "HW",
-   "time": "2026-10-26T16:23:11Z",
-   "height": 6.0
-  },
-  {
-   "type": "LW",
-   "time": "2026-10-26T22:38:07Z",
-   "height": 1.1
-  },
-  {
-   "type": "HW",
-   "time": "2026-10-27T04:29:01Z",
-   "height": 6.3
-  },
-  {
-   "type": "LW",
-   "time": "2026-10-27T10:59:25Z",
-   "height": 0.8
-  },
-  {
-   "type": "HW",
-   "time": "2026-10-27T16:59:10Z",
-   "height": 6.1
-  },
-  {
-   "type": "LW",
-   "time": "2026-10-27T23:17:40Z",
-   "height": 1.0
-  },
-  {
-   "type": "HW",
-   "time": "2026-10-28T05:09:51Z",
-   "height": 6.3
-  },
-  {
-   "type": "LW",
-   "time": "2026-10-28T11:38:57Z",
-   "height": 0.9
-  },
-  {
-   "type": "HW",
-   "time": "2026-10-28T17:38:03Z",
-   "height": 6.1
-  },
-  {
-   "type": "LW",
-   "time": "2026-10-29T00:00:15Z",
-   "height": 1.0
-  },
-  {
-   "type": "HW",
-   "time": "2026-10-29T05:54:35Z",
-   "height": 6.1
-  },
-  {
-   "type": "LW",
-   "time": "2026-10-29T12:20:31Z",
-   "height": 1.2
-  },
-  {
-   "type": "HW",
-   "time": "2026-10-29T18:18:53Z",
-   "height": 5.9
-  },
   {
    "type": "LW",
    "time": "2026-10-30T00:44:51Z",
@@ -157,7 +82,62 @@
   {
    "type": "HW",
    "time": "2026-11-02T22:29:56Z",
-   "height": 5.0
+   "height": 5
+  },
+  {
+   "type": "LW",
+   "time": "2026-11-03T05:14:20Z",
+   "height": 1.8
+  },
+  {
+   "type": "HW",
+   "time": "2026-11-03T11:40:51Z",
+   "height": 4.8
+  },
+  {
+   "type": "LW",
+   "time": "2026-11-03T17:45:54Z",
+   "height": 2.6
+  },
+  {
+   "type": "HW",
+   "time": "2026-11-03T23:54:13Z",
+   "height": 5
+  },
+  {
+   "type": "LW",
+   "time": "2026-11-04T06:33:14Z",
+   "height": 1.6
+  },
+  {
+   "type": "HW",
+   "time": "2026-11-04T13:00:00Z",
+   "height": 5
+  },
+  {
+   "type": "LW",
+   "time": "2026-11-04T18:57:05Z",
+   "height": 2.4
+  },
+  {
+   "type": "HW",
+   "time": "2026-11-05T01:06:48Z",
+   "height": 5.3
+  },
+  {
+   "type": "LW",
+   "time": "2026-11-05T07:36:38Z",
+   "height": 1.4
+  },
+  {
+   "type": "HW",
+   "time": "2026-11-05T13:55:25Z",
+   "height": 5.3
+  },
+  {
+   "type": "LW",
+   "time": "2026-11-05T19:54:53Z",
+   "height": 2.1
   }
  ]
 }

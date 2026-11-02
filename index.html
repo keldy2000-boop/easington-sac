@@ -209,6 +209,12 @@ td.cell .dropped { text-decoration: line-through; opacity: .5; }
 .prof-stats .k { font-size: 13px; color: var(--muted); text-transform: uppercase; letter-spacing: .06em; font-weight: 600; }
 .chart svg { width: 100%; height: auto; display: block; }
 
+/* Visitor counter */
+.foot { max-width: 1040px; margin: -32px auto 0; padding: 0 16px 28px; text-align: center; font-size: 14px; color: var(--muted); }
+.foot #visits { display: inline-flex; align-items: center; gap: 6px; font-variant-numeric: tabular-nums; }
+.foot #visits[hidden] { display: none; }
+.foot svg { width: 16px; height: 16px; }
+
 /* Fixtures */
 .next-match { display: block; margin-top: 4px; background: none; border: 0; padding: 0; color: #f2f4f7; font-size: 16px; text-align: left; cursor: pointer; text-shadow: inherit; }
 .next-match b { color: var(--thread); font-weight: 700; }
@@ -409,6 +415,7 @@ table.cond tr.today > td { background: var(--cod-soft); }
 </header>
 
 <main id="main"><p class="empty">Loading the league…</p></main>
+<footer class="foot"><span id="visits" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M1.5 12S5.5 5 12 5s10.5 7 10.5 7-4 7-10.5 7S1.5 12 1.5 12Z" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="12" cy="12" r="3.2" fill="currentColor"/></svg><span id="visits-n"></span></span></footer>
 
 <dialog class="sheet" id="install-help" aria-labelledby="install-title">
   <form method="dialog" class="sheet-in">
@@ -1256,6 +1263,22 @@ table.cond tr.today > td { background: var(--cod-soft); }
   }
   getJSON("data/seasons.json").then(s => { seasons = s; return loadSeason(s.current); })
     .catch(() => { $("#main").innerHTML = `<p class="empty">The results file didn't load. Refresh the page to try again.</p>`; });
+
+  // ---------- visitor counter ----------
+  // Counts each browser once a day on the free Abacus counter service, then shows the total.
+  // Local test copies only read the count so they don't add to it.
+  (function countVisit() {
+    const base = "https://abacus.jasoncameron.dev", key = "easington-sac-keldy/visitors";
+    const today = new Date().toLocaleDateString("en-CA", { timeZone: "Europe/London" });
+    let counted = true;
+    try { counted = localStorage.getItem("esac-visit") === today || location.protocol !== "https:"; } catch (e) {}
+    fetch(`${base}/${counted ? "get" : "hit"}/${key}`).then(r => r.ok ? r.json() : Promise.reject(r.status)).then(d => {
+      if (!counted) try { localStorage.setItem("esac-visit", today); } catch (e) {}
+      if (!(d.value > 0)) return;
+      $("#visits-n").textContent = d.value.toLocaleString("en-GB") + " visit" + (d.value === 1 ? "" : "s");
+      $("#visits").hidden = false;
+    }).catch(() => {});
+  })();
 
   // ---------- app install / Add to Home Screen ----------
   if ("serviceWorker" in navigator && location.protocol === "https:") navigator.serviceWorker.register("sw.js").catch(() => {});

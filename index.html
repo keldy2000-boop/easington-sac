@@ -92,7 +92,7 @@ button, input, select { font: inherit; color: inherit; }
 }
 @keyframes rise { 0% { opacity: 0; transform: translate(0, 0) scale(.5); } 15% { opacity: .9; } 100% { opacity: 0; transform: translate(-10px, -70px) scale(1.2); } }
 
-/* Fish swimming across the masthead: cod, bass, dogfish, whiting and a thornback ray */
+/* Fish swimming across the masthead: cod, bass, dogfish, whiting, a thornback ray and a plaice */
 .sea { position: absolute; inset: 0; pointer-events: none; z-index: 0; }
 .swimmer { position: absolute; left: 0; width: 150px; animation: swim 26s linear infinite; }
 .swimmer.far { width: 80px; top: 2px; opacity: .32; animation-duration: 38s; animation-delay: -21s; }
@@ -104,6 +104,10 @@ button, input, select { font: inherit; color: inherit; }
 .swimmer.fleeing .tail { animation-duration: .08s; }
 .swimmer .wing { transform-box: fill-box; transform-origin: 50% 50%; animation: flap 1.3s ease-in-out infinite alternate; }
 .swimmer.ray .tail { animation-duration: 1.3s; }
+.swimmer.flat .wing { animation: ripple .7s ease-in-out infinite alternate; }
+.swimmer.flat .tail { animation-duration: .7s; }
+@keyframes ripple { from { transform: scale(1, 1); } to { transform: scale(.985, .9) skewX(3deg); } }
+.sea.free .swimmer { animation: none !important; top: 0 !important; bottom: auto !important; left: 0; will-change: transform; }
 .swimmer.fleeing .wing { animation-duration: .18s; }
 @keyframes flap { from { transform: scaleY(1); } to { transform: scaleY(.84) skewX(-4deg); } }
 @keyframes swim { from { transform: translateX(calc(100vw + 20px)); } to { transform: translateX(-240px); } }
@@ -354,6 +358,7 @@ table.cond tr.today > td { background: var(--cod-soft); }
     <div class="swimmer" data-fish="bass" style="width: 120px; top: 30px; opacity: .45; animation-duration: 21s; animation-delay: -15s"><div class="bob"></div></div>
     <div class="swimmer" data-fish="dogfish" style="width: 170px; top: 44%; opacity: .42; animation-duration: 33s; animation-delay: -6s"><div class="bob"></div></div>
     <div class="swimmer" data-fish="whiting" style="width: 92px; top: 26%; opacity: .36; animation-duration: 25s; animation-delay: -2s"><div class="bob"></div></div>
+    <div class="swimmer flat" data-fish="plaice" style="width: 104px; top: 64%; opacity: .42; animation-duration: 37s; animation-delay: -12s"><div class="bob"></div></div>
     <div class="swimmer ray" data-fish="ray" style="width: 110px; top: 54%; opacity: .4; animation-duration: 44s; animation-delay: -30s"><div class="bob"></div></div>
   </div>
   <div class="mast-in">
@@ -1140,28 +1145,123 @@ table.cond tr.today > td { background: var(--cod-soft); }
     <ellipse cx="46" cy="63" rx="2.2" ry="1.4" fill="#4e3824"/><ellipse cx="46" cy="77" rx="2.2" ry="1.4" fill="#4e3824"/>
   </svg>`;
 
-  const FISH = { cod: COD, dogfish: DOGFISH, bass: BASS, whiting: WHITING, ray: RAY };
+  // Plaice, seen from above: an oval brown body with bright orange spots, a rippling frill of fin
+  // all the way round, both eyes on the top side near the head, and a fan tail.
+  const PLAICE_BODY = "M18 56 C20 36 50 22 92 22 C128 22 154 34 162 50 C164 54 164 58 162 62 C154 78 128 90 92 90 C50 90 20 76 18 56 Z";
+  const PLAICE_FRILL = "M12 56 C14 30 48 12 92 12 C132 12 160 28 168 48 L168 64 C160 84 132 100 92 100 C48 100 14 82 12 56 Z";
+  const PLAICE = k => `<svg viewBox="0 0 200 112">
+    <defs>
+      <radialGradient id="pl${k}s" cx=".4" cy=".45" r=".65"><stop offset="0" stop-color="#a98a5c"/><stop offset=".75" stop-color="#8a6d45"/><stop offset="1" stop-color="#6e5434"/></radialGradient>
+      <pattern id="pl${k}f" width="5" height="5" patternUnits="userSpaceOnUse"><path d="M2.5 0V5" stroke="#5a4329" stroke-width=".7" opacity=".6"/></pattern>
+    </defs>
+    <g class="tail">
+      <path d="M160 56 C172 44 184 36 196 30 C192 46 192 66 196 82 C184 76 172 68 160 56 Z" fill="#8a6d45" stroke="#4e3a22" stroke-width="1"/>
+      <path d="M164 56 L194 36 M164 56 L193 48 M164 56 L193 64 M164 56 L194 76" stroke="#5a4329" stroke-width=".7" opacity=".7"/>
+    </g>
+    <g class="wing">
+      <path d="${PLAICE_FRILL}" fill="#9a7c50" stroke="#4e3a22" stroke-width="1"/>
+      <path d="${PLAICE_FRILL}" fill="url(#pl${k}f)"/>
+    </g>
+    <path d="${PLAICE_BODY}" fill="url(#pl${k}s)" stroke="#4e3a22" stroke-width="1.3"/>
+    <path d="M42 50 C60 46 70 54 92 55 C118 56 140 56 160 56" fill="none" stroke="#e8d9b6" stroke-width="1" opacity=".55"/>
+    <g fill="#ec7a2a" stroke="#a64a10" stroke-width=".6">
+      <circle cx="66" cy="38" r="3.6"/><circle cx="92" cy="34" r="3.8"/><circle cx="118" cy="38" r="3.4"/><circle cx="140" cy="46" r="3"/>
+      <circle cx="78" cy="66" r="3.7"/><circle cx="104" cy="72" r="3.9"/><circle cx="128" cy="66" r="3.3"/><circle cx="146" cy="62" r="2.6"/>
+      <circle cx="56" cy="66" r="2.8"/><circle cx="106" cy="52" r="2.6"/>
+    </g>
+    <path d="M44 40 C40 48 40 62 46 72" fill="none" stroke="#4e3a22" stroke-width="1.1" opacity=".7"/>
+    <circle cx="31" cy="46" r="3.6" fill="#e9e1cc" stroke="#3a2a16" stroke-width=".9"/><circle cx="30.5" cy="46" r="2.1" fill="#111"/>
+    <circle cx="37" cy="39" r="3.3" fill="#e9e1cc" stroke="#3a2a16" stroke-width=".9"/><circle cx="36.5" cy="39" r="1.9" fill="#111"/>
+    <path d="M20 58 Q24 61 29 59" fill="none" stroke="#3a2a16" stroke-width="1.2" stroke-linecap="round"/>
+  </svg>`;
+
+  const FISH = { cod: COD, dogfish: DOGFISH, bass: BASS, whiting: WHITING, ray: RAY, plaice: PLAICE };
   document.querySelectorAll(".swimmer").forEach((sw, i) => { $(".bob", sw).innerHTML = (FISH[sw.dataset.fish] || COD)(i); });
 
-  // Touch a fish and it darts off: flick the tail and surge ahead, then ease back to cruising.
-  // The swimmers sit under the masthead content, so hit-test their boxes rather than relying on the event target.
-  $(".mast").addEventListener("pointerdown", e => {
-    if (e.target.closest("button, select, a, input, .badge")) return;
-    document.querySelectorAll(".swimmer").forEach(sw => {
-      const r = sw.getBoundingClientRect();
-      if (e.clientX < r.left || e.clientX > r.right || e.clientY < r.top + r.height * .15 || e.clientY > r.bottom - r.height * .1) return;
-      const swim = sw.getAnimations().find(a => a.animationName === "swim");
-      if (!swim || sw.classList.contains("fleeing")) return;
-      sw.classList.add("fleeing");
-      const t0 = performance.now();
-      (function step(now) {
-        const t = now - t0;
-        swim.playbackRate = 1 + 16 * Math.exp(-t / 380) * Math.min(1, t / 60);
-        if (t < 2200) requestAnimationFrame(step);
-        else { swim.playbackRate = 1; sw.classList.remove("fleeing"); }
-      })(t0);
+  // Free swimming: each fish enters from any edge of the masthead, swims across, bumps into others
+  // (they bounce apart and dart off with a fast tail flick), and re-enters from a new edge once it's out.
+  // Touching a fish sends it darting away from your finger.
+  (function freeSwim() {
+    if (matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    const sea = $(".sea"), mast = $(".mast");
+    if (!sea) return;
+    sea.classList.add("free");
+    const rnd = (a, b) => a + Math.random() * (b - a);
+    const fish = [...sea.querySelectorAll(".swimmer")].map(el => {
+      const w = el.getBoundingClientRect().width || 120;
+      return { el, w, h: w * .5, r: w * .32, x: 0, y: 0, vx: 0, vy: 0, cruise: rnd(28, 52) * (w > 140 ? .85 : 1), boost: 0, cool: 0 };
     });
-  });
+    const size = () => ({ W: mast.clientWidth, H: mast.clientHeight });
+    // Start from a random edge, heading somewhere across the masthead
+    function enter(f, anywhere) {
+      const { W, H } = size();
+      const side = Math.floor(rnd(0, 4));
+      if (anywhere) { f.x = rnd(0, W); f.y = rnd(10, H - 10); }
+      else if (side === 0) { f.x = -f.w; f.y = rnd(10, H - 10); }
+      else if (side === 1) { f.x = W + f.w; f.y = rnd(10, H - 10); }
+      else if (side === 2) { f.x = rnd(0, W); f.y = -f.h; }
+      else { f.x = rnd(0, W); f.y = H + f.h; }
+      const tx = rnd(W * .2, W * .8), ty = rnd(H * .25, H * .75);
+      let a = Math.atan2(ty - f.y, tx - f.x);
+      if (anywhere) a = rnd(0, Math.PI * 2);
+      // keep the swim mostly level, as fish do
+      const level = Math.cos(a) >= 0 ? 0 : Math.PI, tilt = Math.max(-.75, Math.min(.75, Math.atan2(Math.sin(a), Math.abs(Math.cos(a)))));
+      a = level === 0 ? tilt : Math.PI - tilt;
+      f.vx = Math.cos(a) * f.cruise; f.vy = Math.sin(a) * f.cruise;
+      f.boost = 0; f.cool = 0;
+    }
+    fish.forEach(f => enter(f, true));
+    function place(f) {
+      const right = f.vx > 0, tilt = Math.max(-.75, Math.min(.75, Math.atan2(f.vy, Math.abs(f.vx))));
+      // the drawings face left; flip them to face right, and tip the nose up or down with the direction
+      f.el.style.transform = "translate(" + (f.x - f.w / 2).toFixed(1) + "px," + (f.y - f.h / 2).toFixed(1) + "px) " +
+        (right ? "rotate(" + tilt.toFixed(3) + "rad) scaleX(-1)" : "rotate(" + (-tilt).toFixed(3) + "rad)");
+    }
+    function dart(f, ax, ay) {
+      const len = Math.hypot(ax, ay) || 1;
+      f.vx = ax / len * f.cruise; f.vy = ay / len * f.cruise * .6;
+      f.boost = 1;
+      f.el.classList.add("fleeing");
+      clearTimeout(f.t); f.t = setTimeout(() => f.el.classList.remove("fleeing"), 1100);
+    }
+    let last = performance.now();
+    function tick(now) {
+      const dt = Math.min(.05, (now - last) / 1000); last = now;
+      const { W, H } = size();
+      fish.forEach(f => {
+        const speed = 1 + 4 * f.boost;
+        f.x += f.vx * speed * dt; f.y += f.vy * speed * dt;
+        f.boost = Math.max(0, f.boost - dt * .9);
+        f.cool = Math.max(0, f.cool - dt);
+        // ease back towards level swimming after a dart
+        f.vy *= 1 - dt * .15;
+        const sp = Math.hypot(f.vx, f.vy) || 1;
+        f.vx *= f.cruise / sp; f.vy *= f.cruise / sp;
+        if (f.x < -f.w * 1.2 || f.x > W + f.w * 1.2 || f.y < -f.h * 1.5 || f.y > H + f.h * 1.5) enter(f);
+      });
+      // bumps: overlapping fish swap their head-on motion, push apart and dart off
+      for (let i = 0; i < fish.length; i++) for (let j = i + 1; j < fish.length; j++) {
+        const a = fish[i], b = fish[j], dx = b.x - a.x, dy = (b.y - a.y) * 1.6, d = Math.hypot(dx, dy), min = a.r + b.r;
+        if (d >= min || d === 0) continue;
+        const nx = dx / d, ny = dy / d;
+        a.x -= nx * (min - d) / 2; b.x += nx * (min - d) / 2;
+        a.y -= ny * (min - d) / 3.2; b.y += ny * (min - d) / 3.2;
+        if (a.cool > 0 || b.cool > 0) continue;
+        a.cool = b.cool = .8;
+        dart(a, -nx + rnd(-.4, .4), -ny + rnd(-.6, .6));
+        dart(b, nx + rnd(-.4, .4), ny + rnd(-.6, .6));
+      }
+      fish.forEach(place);
+      requestAnimationFrame(tick);
+    }
+    requestAnimationFrame(tick);
+    // Touch a fish and it darts away from your finger
+    mast.addEventListener("pointerdown", e => {
+      if (e.target.closest("button, select, a, input, .badge")) return;
+      const box = mast.getBoundingClientRect(), px = e.clientX - box.left, py = e.clientY - box.top;
+      fish.forEach(f => { if (Math.abs(px - f.x) < f.w / 2 && Math.abs(py - f.y) < f.h / 2) dart(f, f.x - px || 1, f.y - py); });
+    });
+  })();
   const badge = $("#badge");
   badge.addEventListener("click", () => { badge.classList.remove("splash"); void badge.getBoundingClientRect(); badge.classList.add("splash"); });
   badge.addEventListener("animationend", e => { if (e.animationName === "escape") badge.classList.remove("splash"); });

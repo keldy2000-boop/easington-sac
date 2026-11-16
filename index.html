@@ -264,6 +264,60 @@ table.cond tr.today > td { background: var(--cod-soft); }
 .subtab:hover { color: var(--ink); }
 .subtab[aria-selected="true"] { background: var(--fabric); color: #fff; }
 
+/* Knockout cup wall chart */
+.kc-wrap { overflow-x: auto; background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 12px; -webkit-overflow-scrolling: touch; }
+.kc { position: relative; transform-origin: top left; }
+.kc-wrap:not(.zoomed) { overflow-x: hidden; }
+.kc-tools { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px; }
+.kc-lines { position: absolute; inset: 0; }
+.kc-lines path { fill: none; stroke: var(--line); stroke-width: 2; }
+.kc-head { position: absolute; top: -4px; text-align: center; font-family: var(--font-display); font-weight: 700; font-size: 15px; letter-spacing: .06em; text-transform: uppercase; color: var(--ink); line-height: 1.1; }
+.kc-head small { display: block; font-family: var(--font-body); font-weight: 600; font-size: 11px; letter-spacing: .02em; text-transform: none; color: var(--muted); }
+.kc-box { position: absolute; display: grid; grid-template-rows: 1fr 1fr; background: var(--bg); border: 1px solid var(--line); border-radius: 6px; overflow: hidden; box-shadow: 0 1px 2px rgb(0 0 0 / .06); }
+.kc-box.kc-empty { border-style: dashed; background: transparent; box-shadow: none; }
+.kc-box.note { border-color: var(--warn); }
+.kc-box.final { border: 2px solid var(--thread); box-shadow: 0 0 0 3px var(--gold-fill); }
+.kc-row { display: flex; align-items: center; justify-content: space-between; gap: 6px; padding: 0 8px; min-width: 0; font-size: 14px; }
+.kc-row + .kc-row { border-top: 1px solid var(--line); }
+.kc-name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; min-width: 0; font-weight: 600; }
+.kc-bag { font-family: var(--font-display); font-size: 14px; white-space: nowrap; color: var(--muted); }
+.kc-row.won { background: var(--gold-fill); }
+.kc-row.won .kc-name::after { content: " ✓"; color: var(--good); }
+.kc-row.won .kc-name, .kc-row.won .kc-bag { font-weight: 700; color: var(--ink); }
+.kc-row.out .kc-name { font-weight: 400; color: var(--muted); }
+.kc-row.tbd { color: var(--muted); font-style: italic; font-size: 13px; }
+.kc-trophy { position: absolute; width: 60px; height: 60px; }
+.kc-under { position: absolute; text-align: center; font-size: 13px; color: var(--muted); display: grid; gap: 2px; }
+.kc-champ { font-family: var(--font-display); font-size: 22px; font-weight: 700; color: var(--ink); }
+.kc-prize { font-weight: 700; color: var(--gold-ink); }
+.kc-hint { margin: 0; font-size: 13px; }
+.kc-status { display: block; margin-top: 3px; font-family: var(--font-body); font-size: 11px; font-weight: 600; letter-spacing: 0; text-transform: none; color: var(--warn); }
+.kc-status.drawn { color: var(--good); }
+.kc-arrow { position: absolute; display: grid; justify-items: center; gap: 2px; text-align: center; font-size: 10px; line-height: 1.15; color: var(--muted); }
+.kc-arrow svg { width: 26px; height: 26px; fill: none; stroke: var(--cod); stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
+
+/* Knockout cup */
+.ko-round { display: grid; gap: 10px; }
+.ko-head { display: flex; flex-wrap: wrap; align-items: baseline; gap: 10px; }
+.ko-head h3 { font-size: 24px; font-weight: 700; }
+.ko-ties { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 10px; }
+.ko-tie { background: var(--surface); border: 1px solid var(--line); border-radius: 6px; padding: 8px 12px; display: grid; gap: 2px; min-width: 0; }
+.ko-tie.open { border-color: var(--warn); }
+.ko-side { display: flex; justify-content: space-between; align-items: center; gap: 8px; padding: 4px 0; min-width: 0; }
+.ko-side + .ko-side { border-top: 1px dashed var(--line); }
+.ko-name { min-width: 0; overflow-wrap: anywhere; }
+.ko-side.won .ko-name, .ko-side.won .ko-bag { font-weight: 700; }
+.ko-side.won .ko-name::after { content: " ✓"; color: var(--good); }
+.ko-side.out { color: var(--muted); }
+.ko-side.out .linkbtn { font-weight: 400; color: var(--muted); }
+.ko-side.bye { color: var(--muted); font-style: italic; }
+.ko-bag { font-family: var(--font-display); font-size: 17px; white-space: nowrap; }
+.ko-why { font-size: 13px; color: var(--muted); }
+.ko-tie.open .ko-why { color: var(--warn); font-weight: 600; }
+.ko-champ { display: flex; align-items: center; gap: 14px; }
+.ko-champ .medal { min-width: 44px; height: 44px; font-size: 22px; }
+.ko-champ .k { font-size: 13px; color: var(--muted); text-transform: uppercase; letter-spacing: .08em; font-weight: 600; }
+
 /* Entry stars next to names */
 .star { display: inline-block; margin-left: 3px; font-size: .8em; line-height: 1; vertical-align: 1px; }
 .star.silver { color: var(--gold-ink); }
@@ -405,6 +459,7 @@ table.cond tr.today > td { background: var(--cod-soft); }
   <nav class="tabs" role="tablist" aria-label="Sections">
     <button class="tab" role="tab" id="tab-table" data-view="table" aria-selected="true">Silverware Challenge</button>
     <button class="tab" role="tab" id="tab-cod" data-view="cod" aria-selected="false" hidden>Cod Challenge</button>
+    <button class="tab" role="tab" id="tab-cup" data-view="cup" aria-selected="false" hidden>Knockout Cup</button>
     <button class="tab" role="tab" id="tab-matches" data-view="matches" aria-selected="false">Matches</button>
     <button class="tab" role="tab" id="tab-anglers" data-view="anglers" aria-selected="false">Anglers</button>
     <button class="tab" role="tab" id="tab-conditions" data-view="conditions" aria-selected="false">Conditions</button>
@@ -429,7 +484,7 @@ table.cond tr.today > td { background: var(--cod-soft); }
   const $ = (s, el = document) => el.querySelector(s);
   const esc = s => String(s).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
   let data = null, seasons = null, seasonId = null, view = "table", bestN = 0, openMatch = null, angler = null, filter = "";
-  const VIEWS = ["table", "weight", "cod", "matches", "anglers", "conditions", "rules"];
+  const VIEWS = ["table", "weight", "cod", "cup", "matches", "anglers", "conditions", "rules"];
 
   try { const v = localStorage.getItem("esac-view"); if (v) view = v; } catch (e) {}
   if (/^#(table|weight|cod|matches|anglers|conditions|rules)$/.test(location.hash)) view = location.hash.slice(1);
@@ -567,7 +622,7 @@ table.cond tr.today > td { background: var(--cod-soft); }
           <div class="stat"><div class="k">Biggest fish</div><div class="v num">${fish[0] ? lbOz(fish[0].oz) : "–"}</div><div class="d">${fish[0] ? esc(andList(fish.filter(f => f.oz === fish[0].oz).map(f => f.name + (f.species ? " (" + fishName(f) + ")" : "")))) : "None weighed yet"}</div></div>` : `
           <div class="stat"><div class="k">Matches fished</div><div class="v num">${ms.length}</div><div class="d">${esc(data.season)} season</div></div>
           <div class="stat"><div class="k">Most match wins</div><div class="v">${esc(mostWins.name)}</div><div class="d num">${mostWins.wins} win${mostWins.wins === 1 ? "" : "s"}</div></div>`}
-          <div class="stat"><div class="k">Anglers fished</div><div class="v num">${new Set(ms.flatMap(m => Object.keys(m.sheet || m.results))).size}</div><div class="d num">${(attendance / ms.length).toFixed(1)} per match on average</div></div>
+          <div class="stat"><div class="k">Anglers fished</div><div class="v num">${new Set(ms.flatMap(m => Object.keys(m.sheet || m.results))).size}</div><div class="d num">${weighed() ? new Set(ms.flatMap(m => Object.entries(m.sheet || {}).filter(([, r]) => r.bag > 0).map(([n]) => n))).size + " weighed in" + (ms.length > 1 ? ", " + (attendance / ms.length).toFixed(1) + " fished per match" : "") : (attendance / ms.length).toFixed(1) + " per match on average"}</div></div>
         </div>`;
   }
 
@@ -684,6 +739,121 @@ table.cond tr.today > td { background: var(--cod-soft); }
       </section>`;
   }
 
+  // ---------- knockout cup ----------
+  const roundName = (ties, i) => ({ 1: "Final", 2: "Semi-finals", 4: "Quarter-finals", 8: "Last 16", 16: "Last 32", 32: "Last 64" }[ties] || "Round " + (i + 1));
+  // Who won a tie: the heavier bag at that round's match; walkovers if one didn't fish; a set winner overrides
+  function decideTie(t, round) {
+    const ko = data.knockout, real = x => (ko.aliases && ko.aliases[x]) || x;
+    if (!t.b) return { winner: t.a, why: "Bye" };
+    const m = data.matches.find(x => x.no === round.match);
+    const sheet = m && (m.sheet || null);
+    const ra = sheet && sheet[real(t.a)], rb = sheet && sheet[real(t.b)];
+    const res = { bagA: ra ? ra.bag || 0 : null, bagB: rb ? rb.bag || 0 : null };
+    if (t.winner) return { ...res, winner: t.winner, why: t.note || "Decided by the club" };
+    if (!m) return { ...res, pending: true };
+    if (!ra && !rb) return { ...res, open: true, why: "Neither fished match " + round.match };
+    if (!rb) return { ...res, winner: t.a, why: t.b + " didn't fish" };
+    if (!ra) return { ...res, winner: t.b, why: t.a + " didn't fish" };
+    if (res.bagA === res.bagB) return { ...res, open: true, why: res.bagA ? "Level on weight" : "Both blanked" };
+    return { ...res, winner: res.bagA > res.bagB ? t.a : t.b };
+  }
+  let cupZoom = false;
+  // Shrinks the wall chart to the page width, unless zoomed in (then it scrolls sideways)
+  function fitCup() {
+    const wrap = document.querySelector(".kc-wrap"), kc = wrap && wrap.querySelector(".kc");
+    if (!kc) return;
+    const w = parseFloat(kc.style.width), hgt = parseFloat(kc.style.height);
+    const s = cupZoom ? 1 : Math.min(1, (wrap.clientWidth - 24) / w);
+    kc.style.transform = s < 1 ? "scale(" + s + ")" : "";
+    kc.style.marginBottom = s < 1 ? (hgt * s - hgt) + "px" : "";
+    kc.style.marginRight = s < 1 ? (w * s - w) + "px" : "";
+    wrap.classList.toggle("zoomed", cupZoom);
+  }
+  window.addEventListener("resize", () => { if (view === "cup") fitCup(); });
+  document.addEventListener("click", e => { if (e.target.closest("#kc-zoom")) { cupZoom = !cupZoom; e.target.closest("#kc-zoom").textContent = cupZoom ? "Fit to page" : "Zoom in"; fitCup(); } });
+
+  // Knockout chart: one column per round. The cup is redrawn after every round,
+  // so ties aren't joined to the next round; each column fills in when its draw is made.
+  function cupChart(ko, rounds, decided, real, champion) {
+    const first = rounds[0].ties.length, total = Math.max(1, Math.ceil(Math.log2(first * 2)));
+    const W = 168, H = 56, ARROW = 46, PITCH = 66, TOP = 52, FW = 196, FH = 64;
+    const colH = TOP + first * PITCH;
+    const matchOf = r => rounds[r] ? rounds[r].match : rounds[0].match + r;
+    const when = r => { const f = (data.fixtures || []).find(x => x.no === matchOf(r)); return "Match " + matchOf(r) + (f && f.date ? " · " + new Date(f.date + "T12:00:00").toLocaleDateString("en-GB", { day: "numeric", month: "short" }) : ""); };
+    const row = (name, bag, d) => {
+      if (!name) return `<div class="kc-row tbd">To be drawn</div>`;
+      const cls = d && d.winner ? (d.winner === name ? " won" : " out") : "";
+      return `<div class="kc-row${cls}" title="${esc(name)}${real(name) !== name ? " (" + esc(real(name)) + ")" : ""}"><button class="linkbtn kc-name" data-angler="${esc(real(name))}">${esc(name)}</button><span class="kc-bag num">${bag == null ? "" : bag > 0 ? lbOz(bag) : "Blank"}</span></div>`;
+    };
+    const box = (x, y, w, hgt, t, d, extra) => `<div class="kc-box${t ? "" : " kc-empty"}${d && d.why ? " note" : ""}${extra || ""}" style="left:${x}px;top:${y - hgt / 2}px;width:${w}px;height:${hgt}px" ${d && d.why ? `title="${esc(d.why)}"` : ""}>
+        ${row(t && t.a, d && d.bagA, d)}${t && !t.b ? `<div class="kc-row tbd">Bye</div>` : row(t && t.b, d && d.bagB, d)}</div>`;
+    let x = 0, boxes = "", heads = "", arrows = "", finalX = 0, finalY = 0;
+    for (let r = 0; r < total; r++) {
+      const ties = Math.max(1, first / Math.pow(2, r)), isFinal = r === total - 1;
+      const w = isFinal ? FW : W, hgt = isFinal ? FH : H;
+      const round = rounds[r], drawn = !!round, done = drawn && decided[r].every(d => d.winner);
+      // spread this round's ties evenly down the same height as the first round
+      const step = (colH - TOP) / ties;
+      for (let k = 0; k < ties; k++) {
+        const y = TOP + step * (k + 0.5), t = round && round.ties[k], d = t && decided[r][k];
+        boxes += box(x, y, w, hgt, t, d, isFinal ? " final" : "");
+        if (isFinal) { finalX = x; finalY = y; }
+      }
+      const status = drawn ? (done ? "Complete" : "Drawn") : r === 0 ? "" : "Draw after match " + matchOf(r - 1);
+      heads += `<div class="kc-head" style="left:${x}px;width:${w}px">${isFinal ? "Final" : roundName(ties, r)}<small>${when(r)}</small><span class="kc-status${drawn ? " drawn" : ""}">${status}</span></div>`;
+      if (!isFinal) arrows += `<div class="kc-arrow" style="left:${x + w}px;width:${ARROW}px;top:${TOP + (colH - TOP) / 2 - 34}px"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12h14M13 6l6 6-6 6"/></svg><span>Winners<br>redrawn</span></div>`;
+      x += w + (isFinal ? 0 : ARROW);
+    }
+    const width = x, height = Math.max(colH, finalY + FH / 2 + 90) + 6;
+    const prizes = (ko.prizes || []).map(p => esc(p.label) + " £" + p.amount).join(" · ");
+    const trophy = `<svg class="kc-trophy" viewBox="0 0 64 64" aria-hidden="true" style="left:${finalX + FW / 2 - 30}px;top:${finalY - FH / 2 - 76}px">
+        <path d="M18 8h28v14c0 9-6 16-14 16s-14-7-14-16z" fill="url(#cupGold)" stroke="#8a6a12" stroke-width="2"/>
+        <path d="M18 12H9c0 9 4 14 10 15M46 12h9c0 9-4 14-10 15" fill="none" stroke="#b8880f" stroke-width="3"/>
+        <path d="M28 38h8v8h-8z" fill="#c99a1c"/><path d="M20 46h24l3 8H17z" fill="url(#cupGold)" stroke="#8a6a12" stroke-width="2"/>
+        <defs><linearGradient id="cupGold" x1="0" x2="1"><stop offset="0" stop-color="#fff0a8"/><stop offset=".5" stop-color="#e6c740"/><stop offset="1" stop-color="#b8880f"/></linearGradient></defs></svg>`;
+    const under = `<div class="kc-under" style="left:${finalX - 10}px;width:${FW + 20}px;top:${finalY + FH / 2 + 10}px">${champion ? `<div class="kc-champ">${esc(champion)}</div><div>${esc(ko.name)} winner</div>` : ""}${prizes ? `<div class="kc-prize">${prizes}</div>` : ""}</div>`;
+    return `<div class="kc-wrap" role="region" aria-label="${esc(ko.name)} chart" tabindex="0">
+        <div class="kc" style="width:${width}px;height:${height}px">
+          ${heads}${arrows}${trophy}${boxes}${under}
+        </div></div>
+      <div class="kc-tools"><p class="sub kc-hint">The cup is redrawn after every round: the winners go back in the hat, and the next column fills in when the draw is made.</p><button class="btn" type="button" id="kc-zoom">${cupZoom ? "Fit to page" : "Zoom in"}</button></div>`;
+  }
+
+  function renderCup() {
+    const ko = data.knockout, rounds = ko.rounds || [];
+    const known = new Set(standings().map(r => r.name));
+    const real = x => (ko.aliases && ko.aliases[x]) || x;
+    const fixture = no => (data.fixtures || []).find(f => f.no === no);
+    const decided = rounds.map(r => r.ties.map(t => decideTie(t, r)));
+    const last = rounds.length - 1;
+    const lastDone = last >= 0 && decided[last].every(d => d.winner);
+    const champion = lastDone && rounds[last].ties.length === 1 ? decided[last][0].winner : null;
+    const runnerUp = champion ? [rounds[last].ties[0].a, rounds[last].ties[0].b].find(x => x && x !== champion) : null;
+    const prize = p => (ko.prizes || []).find(x => x.place === p);
+    const left = last < 0 ? 0 : lastDone ? decided[last].length : rounds[last].ties.reduce((s, t) => s + (t.b ? 2 : 1), 0);
+    const unknown = [...new Set(rounds.flatMap(r => r.ties.flatMap(t => [t.a, t.b]).filter(Boolean)))].filter(x => !known.has(real(x)));
+    const nextMatch = last >= 0 ? rounds[last].match + 1 : null;
+    const when = no => { const f = fixture(no); return "Match " + no + (f && f.date ? ", " + fmtDate(f.date) : ""); };
+    const side = (name, bag, d, mine) => `<div class="ko-side${d.winner === name ? " won" : d.winner ? " out" : ""}">
+        <span class="ko-name"><button class="linkbtn" data-angler="${esc(real(name))}">${esc(name)}</button>${real(name) !== name ? ` <span class="meta">(${esc(real(name))})</span>` : ""}${stars(real(name))}${!known.has(real(name)) ? ` <span class="chip" title="Not on the anglers list yet, so their weight can't be found">check name</span>` : ""}</span>
+        <span class="ko-bag num">${bag == null ? (d.pending ? "" : "–") : bag > 0 ? lbOz(bag) : "Blank"}</span></div>`;
+    return `
+      <section class="view">
+        <div class="strip">
+          <div class="stat lead"><div class="k">${champion ? "Winner" : "Now playing"}</div><div class="v">${champion ? esc(champion) : last >= 0 ? roundName(rounds[last].ties.length, last) : "Draw to come"}</div><div class="d">${champion ? esc(ko.name) + " " + esc(data.season) : last >= 0 ? esc(when(rounds[last].match)) : ""}</div></div>
+          <div class="stat"><div class="k">Anglers left</div><div class="v num">${left}</div><div class="d">${rounds.length ? rounds[0].ties.reduce((s, t) => s + (t.b ? 2 : 1), 0) + " started" : ""}</div></div>
+          <div class="stat"><div class="k">Next draw</div><div class="v">${champion ? "Finished" : lastDone ? "Ready" : "After " + esc(when(rounds[last] ? rounds[last].match : 0).split(",")[0])}</div><div class="d">${champion ? "" : lastDone ? decided[last].length + " winners go into the hat" : "Winners are redrawn for match " + nextMatch}</div></div>
+          ${(ko.prizes || []).length ? `<div class="stat"><div class="k">Prize money</div><div class="v num">£${ko.prizes.reduce((s, p) => s + p.amount, 0)}</div><div class="d">${ko.prizes.map(p => esc(p.label) + " £" + p.amount).join(" · ")}</div></div>` : ""}
+        </div>
+        <div class="sec-head"><div><h2>${esc(ko.name)} ${esc(data.season)}</h2><p class="sub">${esc(ko.about || "")}</p></div></div>
+        ${unknown.length ? `<div class="note">These names aren't on the anglers list yet, so the app can't find their weights: ${unknown.map(esc).join(", ")}. Add them to the Anglers tab with the same spelling, or tell Claude who they are.</div>` : ""}
+        ${champion ? `<div class="panel ko-champ"><span class="medal m1">1</span><div><div class="k">${esc(ko.name)} winner${prize(1) ? " · £" + prize(1).amount : ""}</div><h3>${esc(champion)}</h3></div>${runnerUp ? `<span class="medal m2">2</span><div><div class="k">Runner-up${prize(2) ? " · £" + prize(2).amount : ""}</div><h3>${esc(runnerUp)}</h3></div>` : ""}</div>` : ""}
+        ${lastDone && !champion ? `<div class="panel"><h3>In the hat for the next round</h3><p class="sub">${decided[last].map(d => esc(d.winner)).join(", ")}</p></div>` : ""}
+        ${rounds.length ? cupChart(ko, rounds, decided, real, champion) : `<p class="empty">The draw hasn't been made yet.</p>`}
+        <div class="key"><span>Bold with a ✓ = through to the next round</span><span>Tap a name to see that angler</span></div>
+      </section>`;
+  }
+
   function renderMatches() {
     const ms = matchesSorted().reverse();
     const m = openMatch != null ? data.matches.find(x => x.no === openMatch) : null;
@@ -697,7 +867,7 @@ table.cond tr.today > td { background: var(--cod-soft); }
           const pl = placeOf(x), checks = matchChecks(x).filter(c => c.w);
           const big = x.sheet ? Object.entries(x.sheet).flatMap(([n, r]) => (r.fish || []).map(f => ({ ...f, name: n }))).sort((a, b) => b.oz - a.oz) : [];
           return `<button class="mcard" data-match="${x.no}" aria-pressed="${x.no === openMatch}">
-            <h3>Match ${x.no} <small class="num">${pl.length} fished</small></h3>
+            <h3>Match ${x.no} <small class="num">${pl.length} fished${x.sheet ? " · " + pl.filter(r => r.row.bag > 0).length + " weighed in" : ""}</small></h3>
             ${x.date || x.venue ? `<div class="meta">${esc([fmtDate(x.date), x.venue].filter(Boolean).join(" · "))}</div>` : ""}
             <ol class="podium">${pl.slice(0, 3).map(r => `<li><span>${tier(r.place) ? `<span class="mdot ${tier(r.place)}" aria-hidden="true"></span>` : ""}${esc(r.name)}${stars(r.name)}</span><span class="num">${r.row ? lbOz(r.row.bag) : r.pts}</span></li>`).join("")}</ol>
             ${big.length ? `<div class="meta">Biggest fish: ${lbOz(big[0].oz)}, ${esc(andList(big.filter(f => f.oz === big[0].oz).map(f => f.name)))}</div>` : ""}
@@ -740,7 +910,7 @@ table.cond tr.today > td { background: var(--cod-soft); }
     const pl = placeOf(m), checks = matchChecks(m);
     const notes = checks.filter(c => c.long), chips = checks.filter(c => !c.long);
     return `<div class="panel" id="match-panel">
-      <div class="sec-head"><div><h3>Match ${m.no}</h3><p class="sub">${esc([fmtDate(m.date), m.venue].filter(Boolean).join(" · ") || "Date and venue not recorded yet")}</p></div>
+      <div class="sec-head"><div><h3>Match ${m.no}</h3><p class="sub">${esc([fmtDate(m.date), m.venue].filter(Boolean).join(" · ") || "Date and venue not recorded yet")}${m.sheet ? " · " + pl.length + " fished, " + pl.filter(r => r.row.bag > 0).length + " weighed in" : ""}</p></div>
       <button class="btn" data-close>Close</button></div>
       ${notes.length ? `<div class="note"><b>Notes from the match sheet</b><ul>${notes.map(c => `<li>${esc(c.t)}</li>`).join("")}</ul></div>` : ""}
       ${chips.length ? `<div class="chips">${chips.map(c => `<span class="chip${c.w ? "" : " info"}">${esc(c.t)}</span>`).join("")}</div>` : ""}
@@ -996,6 +1166,8 @@ table.cond tr.today > td { background: var(--cod-soft); }
     nm.hidden = !nf;
     if (nf) { const d = daysTo(nf.date); nm.innerHTML = `<b>Next match:</b> Match ${nf.no}, ${d === 0 ? "today" : d === 1 ? "tomorrow" : fxDate(nf)}${nf.signIn ? " · sign in " + esc(nf.signIn) : ""}${nf.notes ? " · " + esc(nf.notes) : ""}`; }
     $("#tab-cod").hidden = !weighed();
+    $("#tab-cup").hidden = !data.knockout;
+    if (data.knockout) $("#tab-cup").textContent = data.knockout.name || "Knockout";
   }
   // ---------- conditions: tides, weather and sea state ----------
   // Tides are Admiralty predictions for Bridlington, refreshed daily into data/tides.json by a GitHub Action.
@@ -1157,10 +1329,11 @@ table.cond tr.today > td { background: var(--cod-soft); }
   }
 
   function render() {
-    if (!VIEWS.includes(view) || (!weighed() && (view === "weight" || view === "cod"))) view = "table";
+    if (!VIEWS.includes(view) || (!weighed() && (view === "weight" || view === "cod")) || (view === "cup" && !data.knockout)) view = "table";
     document.querySelectorAll(".tab").forEach(t => t.setAttribute("aria-selected", String(t.dataset.view === view || (t.dataset.view === "table" && view === "weight"))));
-    const html = { table: renderTable, weight: renderWeight, cod: renderCod, matches: renderMatches, anglers: renderAnglers, conditions: renderConditions, rules: renderRules }[view]();
+    const html = { table: renderTable, weight: renderWeight, cod: renderCod, cup: renderCup, matches: renderMatches, anglers: renderAnglers, conditions: renderConditions, rules: renderRules }[view]();
     $("#main").innerHTML = html;
+    if (view === "cup") fitCup();
   }
   function go(v) { view = v; try { localStorage.setItem("esac-view", v); } catch (e) {} render(); }
 

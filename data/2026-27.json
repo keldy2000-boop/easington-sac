@@ -137,6 +137,84 @@
     },
     "John Clark": {
      "bag": 6
+    },
+    "Rich Winship": {
+     "bag": 0
+    },
+    "Sue Hannam": {
+     "bag": 0
+    },
+    "Matt Malia": {
+     "bag": 0
+    },
+    "Mark Goundrill": {
+     "bag": 0
+    },
+    "Mike Coulman": {
+     "bag": 0
+    },
+    "Steve Adlard": {
+     "bag": 0
+    },
+    "Walter Hughes": {
+     "bag": 0
+    },
+    "James Liddell": {
+     "bag": 0
+    },
+    "Tony Gamble": {
+     "bag": 0
+    },
+    "Colin Spicer": {
+     "bag": 0
+    },
+    "John Hinchcliffe": {
+     "bag": 0
+    },
+    "Steve Smith": {
+     "bag": 0
+    },
+    "Sammy Knott": {
+     "bag": 0
+    },
+    "Kenny Knott": {
+     "bag": 0
+    },
+    "Johnny Burns": {
+     "bag": 0
+    },
+    "Dan Broughton": {
+     "bag": 0
+    },
+    "Dave Tucker": {
+     "bag": 0
+    },
+    "Garry Dixon": {
+     "bag": 0
+    },
+    "Johnny Vickers": {
+     "bag": 0
+    },
+    "Tony Camplin": {
+     "bag": 0
+    },
+    "Matt Brown": {
+     "bag": 0
+    },
+    "Steve Gibbson": {
+     "bag": 0
+    },
+    "Lock Ketley": {
+     "bag": 0
+    },
+    "Matty Hope": {
+     "bag": 0
+    },
+    "Paul Swift": {
+     "bag": 0
+    },
+    "Mally Douglas": {
+     "bag": 0
     }
    }
   }
@@ -223,5 +301,95 @@
    "end": "16:00",
    "notes": "Charity match – more details in the coming weeks"
   }
- ]
+ ],
+ "knockout": {
+  "name": "Knockout Cup",
+  "about": "Knockout. Each tie is won by the heavier bag at that round's match. The winners are drawn again for the next match until one angler is left.",
+  "aliases": {
+   "Tony 2 Tides": "Tony Camplin"
+  },
+  "rounds": [
+   {
+    "match": 4,
+    "ties": [
+     {
+      "a": "Glen Devine",
+      "b": "Paul Steely"
+     },
+     {
+      "a": "Mike Coulman",
+      "b": "Craig Gawthorpe"
+     },
+     {
+      "a": "Mark Andrews",
+      "b": "Jim Evans"
+     },
+     {
+      "a": "Sammy Knott",
+      "b": "Paul Copley"
+     },
+     {
+      "a": "Louis Watt",
+      "b": "Brogun Burdall"
+     },
+     {
+      "a": "Yukka",
+      "b": "Mally Douglas"
+     },
+     {
+      "a": "John Clark",
+      "b": "Steve Scott"
+     },
+     {
+      "a": "Garry Burdall",
+      "b": "Steve Gibbson"
+     },
+     {
+      "a": "Rich Winship",
+      "b": "John Hinchcliffe"
+     },
+     {
+      "a": "Jordy Critchley",
+      "b": "Lock Ketley"
+     },
+     {
+      "a": "Matt Brown",
+      "b": "Tony 2 Tides"
+     },
+     {
+      "a": "Kenny Knott",
+      "b": "Mark Botterill"
+     },
+     {
+      "a": "Gordy Blyth",
+      "b": "Sue Hannam"
+     },
+     {
+      "a": "Antony Ketley",
+      "b": "Ray White"
+     },
+     {
+      "a": "Gooba",
+      "b": "Steve Smith"
+     },
+     {
+      "a": "Paul Huteson",
+      "b": "Pat Spicer"
+     }
+    ]
+   }
+  ],
+  "prizes": [
+   {
+    "place": 1,
+    "label": "Winner",
+    "amount": 100
+   },
+   {
+    "place": 2,
+    "label": "Runner-up",
+    "amount": 60
+   }
+  ]
+ }
 }

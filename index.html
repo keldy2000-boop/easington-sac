@@ -742,19 +742,28 @@ table.cond tr.today > td { background: var(--cod-soft); }
   // ---------- knockout cup ----------
   const roundName = (ties, i) => ({ 1: "Final", 2: "Semi-finals", 4: "Quarter-finals", 8: "Last 16", 16: "Last 32", 32: "Last 64" }[ties] || "Round " + (i + 1));
   // Who won a tie: the heavier bag at that round's match; walkovers if one didn't fish; a set winner overrides
+  // An angler's heaviest single fish at a match: the Biggest fish column, or their cod if they had just one
+  function heaviestFish(r) {
+    if (!r) return null;
+    const best = (r.fish || []).reduce((b, f) => !b || f.oz > b.oz ? f : b, null);
+    const cod = r.cod && r.cod.count === 1 ? { species: "Cod", oz: r.cod.oz } : null;
+    return cod && (!best || cod.oz > best.oz) ? cod : best;
+  }
+  // Who won a tie: the heaviest single fish at that round's match
   function decideTie(t, round) {
     const ko = data.knockout, real = x => (ko.aliases && ko.aliases[x]) || x;
     if (!t.b) return { winner: t.a, why: "Bye" };
     const m = data.matches.find(x => x.no === round.match);
     const sheet = m && (m.sheet || null);
     const ra = sheet && sheet[real(t.a)], rb = sheet && sheet[real(t.b)];
-    const res = { bagA: ra ? ra.bag || 0 : null, bagB: rb ? rb.bag || 0 : null };
+    const fa = heaviestFish(ra), fb = heaviestFish(rb);
+    const res = { bagA: ra ? (fa ? fa.oz : 0) : null, bagB: rb ? (fb ? fb.oz : 0) : null, fishA: fa, fishB: fb };
     if (t.winner) return { ...res, winner: t.winner, why: t.note || "Decided by the club" };
     if (!m) return { ...res, pending: true };
     if (!ra && !rb) return { ...res, open: true, why: "Neither fished match " + round.match };
     if (!rb) return { ...res, winner: t.a, why: t.b + " didn't fish" };
     if (!ra) return { ...res, winner: t.b, why: t.a + " didn't fish" };
-    if (res.bagA === res.bagB) return { ...res, open: true, why: res.bagA ? "Level on weight" : "Both blanked" };
+    if (res.bagA === res.bagB) return { ...res, open: true, why: res.bagA ? "Same weight fish" : "Neither weighed a fish" };
     return { ...res, winner: res.bagA > res.bagB ? t.a : t.b };
   }
   let cupZoom = false;
@@ -780,13 +789,13 @@ table.cond tr.today > td { background: var(--cod-soft); }
     const colH = TOP + first * PITCH;
     const matchOf = r => rounds[r] ? rounds[r].match : rounds[0].match + r;
     const when = r => { const f = (data.fixtures || []).find(x => x.no === matchOf(r)); return "Match " + matchOf(r) + (f && f.date ? " · " + new Date(f.date + "T12:00:00").toLocaleDateString("en-GB", { day: "numeric", month: "short" }) : ""); };
-    const row = (name, bag, d) => {
+    const row = (name, bag, d, f) => {
       if (!name) return `<div class="kc-row tbd">To be drawn</div>`;
       const cls = d && d.winner ? (d.winner === name ? " won" : " out") : "";
-      return `<div class="kc-row${cls}" title="${esc(name)}${real(name) !== name ? " (" + esc(real(name)) + ")" : ""}"><button class="linkbtn kc-name" data-angler="${esc(real(name))}">${esc(name)}</button><span class="kc-bag num">${bag == null ? "" : bag > 0 ? lbOz(bag) : "Blank"}</span></div>`;
+      return `<div class="kc-row${cls}" title="${esc(name)}${real(name) !== name ? " (" + esc(real(name)) + ")" : ""}"><button class="linkbtn kc-name" data-angler="${esc(real(name))}">${esc(name)}</button><span class="kc-bag num"${f && f.species ? ` title="${esc(f.species)}"` : ""}>${bag == null ? "" : bag > 0 ? lbOz(bag) + (f && f.species ? " " + esc(f.species.toLowerCase()) : "") : "No fish"}</span></div>`;
     };
     const box = (x, y, w, hgt, t, d, extra) => `<div class="kc-box${t ? "" : " kc-empty"}${d && d.why ? " note" : ""}${extra || ""}" style="left:${x}px;top:${y - hgt / 2}px;width:${w}px;height:${hgt}px" ${d && d.why ? `title="${esc(d.why)}"` : ""}>
-        ${row(t && t.a, d && d.bagA, d)}${t && !t.b ? `<div class="kc-row tbd">Bye</div>` : row(t && t.b, d && d.bagB, d)}</div>`;
+        ${row(t && t.a, d && d.bagA, d, d && d.fishA)}${t && !t.b ? `<div class="kc-row tbd">Bye</div>` : row(t && t.b, d && d.bagB, d, d && d.fishB)}</div>`;
     let x = 0, boxes = "", heads = "", arrows = "", finalX = 0, finalY = 0;
     for (let r = 0; r < total; r++) {
       const ties = Math.max(1, first / Math.pow(2, r)), isFinal = r === total - 1;

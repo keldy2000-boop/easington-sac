@@ -304,7 +304,7 @@
  ],
  "knockout": {
   "name": "Knockout Cup",
-  "about": "Knockout. Each tie is won by the heavier bag at that round's match. The winners are drawn again for the next match until one angler is left.",
+  "about": "Knockout. Each tie is won by the heaviest single fish at that round's match. The winners are drawn again for the next match until one angler is left.",
   "aliases": {
    "Tony 2 Tides": "Tony Camplin"
   },
@@ -330,7 +330,7 @@
      },
      {
       "a": "Louis Watt",
-      "b": "Brogun Burdall"
+      "b": "Brogan Burdall"
      },
      {
       "a": "Yukka",

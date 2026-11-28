@@ -2,23 +2,8 @@
  "station": "Bridlington",
  "stationId": "0181",
  "source": "UK Hydrographic Office (Admiralty)",
- "fetched": "2026-11-27T12:25:01.901Z",
+ "fetched": "2026-11-28T11:49:12.690Z",
  "events": [
-  {
-   "type": "HW",
-   "time": "2026-11-27T05:51:40Z",
-   "height": 6
-  },
-  {
-   "type": "LW",
-   "time": "2026-11-27T12:11:24Z",
-   "height": 1.3
-  },
-  {
-   "type": "HW",
-   "time": "2026-11-27T18:09:10Z",
-   "height": 6
-  },
   {
    "type": "LW",
    "time": "2026-11-28T00:43:50Z",
@@ -133,6 +118,26 @@
    "type": "LW",
    "time": "2026-12-03T18:13:30Z",
    "height": 2.4
+  },
+  {
+   "type": "HW",
+   "time": "2026-12-04T00:25:03Z",
+   "height": 5.2
+  },
+  {
+   "type": "LW",
+   "time": "2026-12-04T06:56:05Z",
+   "height": 1.7
+  },
+  {
+   "type": "HW",
+   "time": "2026-12-04T13:17:30Z",
+   "height": 5
+  },
+  {
+   "type": "LW",
+   "time": "2026-12-04T19:17:22Z",
+   "height": 2.3
   }
  ]
 }
